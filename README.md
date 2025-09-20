@@ -36,7 +36,7 @@ Return a constant value of given type
 Cast input from other instruction from one given type to another
 ``` 3.u32 cast v2 ```
 
-### ARITHMETIC INSTRUCTIONS
+### BINARY OPERATIONS INSTRUCTIONS
 
 Calculate result of given operation between two input instructions  
 ``` 4.u32 add v1 v3 ```  

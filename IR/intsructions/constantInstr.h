@@ -7,7 +7,7 @@ namespace ir::instr {
 
 class ConstantInstr : public Instr {
 public:
-    explicit ConstantInstr() : Instr(InstrOpcode::CONSTANT) {}
+  explicit ConstantInstr() : Instr(InstrOpcode::CONSTANT) {}
 };
 
 } // namespace ir::instr

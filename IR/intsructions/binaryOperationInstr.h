@@ -6,8 +6,13 @@
 namespace ir::instr {
 class BinaryOperationInstr : public Instr {
 public:
-    BinaryOperationInstr() : Instr(InstrOpcode::BINARY_OPERATION) {}
+  BinaryOperationInstr() : Instr(InstrOpcode::BINARY_OPERATION) {}
+  BinaryOperationInstr(Instr *lhs, Instr *rhs)
+      : Instr(InstrOpcode::BINARY_OPERATION) {
+    AddInput(lhs);
+    AddInput(rhs);
+  }
 };
-}   // namespace ir::instr
+} // namespace ir::instr
 
 #endif

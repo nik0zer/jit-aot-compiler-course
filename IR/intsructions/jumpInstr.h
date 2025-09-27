@@ -7,9 +7,9 @@ namespace ir::instr {
 
 class JumpInstr : public Instr {
 public:
-    explicit JumpInstr() : Instr(InstrOpcode::JUMP) {}
+  explicit JumpInstr() : Instr(InstrOpcode::JUMP) {}
 
-    bool IsControllFlow() override final { return true; }
+  bool IsControllFlow() override final { return true; }
 };
 
 } // namespace ir::instr

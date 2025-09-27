@@ -7,9 +7,9 @@ namespace ir::instr {
 
 class CallInstr : public Instr {
 public:
-    explicit CallInstr() : Instr(InstrOpcode::CALL) {}
+  explicit CallInstr() : Instr(InstrOpcode::CALL) {}
 
-    bool IsControllFlow() override final { return true; }
+  bool IsControllFlow() override final { return true; }
 };
 
 } // namespace ir::instr

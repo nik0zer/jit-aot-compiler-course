@@ -7,9 +7,12 @@
 
 namespace ir {
 
+using MethodId = std::size_t;
+
 class MethodGraph {
 public:
-  explicit MethodGraph(const std::string &&name) : name_(name) {}
+  explicit MethodGraph(const std::string &&name, MethodId id)
+      : name_(name), id_(id) {}
 
   void AddBlock(BasicBlock *block) { blocks_.push_back(block); }
   bool RemoveBlock(BasicBlock *block) {
@@ -36,6 +39,7 @@ public:
 private:
   std::vector<BasicBlock *> blocks_;
   std::string name_;
+  MethodId id_;
 };
 
 } // namespace ir

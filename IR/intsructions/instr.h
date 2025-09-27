@@ -7,7 +7,8 @@
 
 namespace ir {
 class BasicBlock;
-}
+class MethodGraph;
+} // namespace ir
 
 namespace ir::instr {
 

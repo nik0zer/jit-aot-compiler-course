@@ -11,6 +11,8 @@ public:
       : Instr(InstrOpcode::BINARY_OPERATION) {
     AddInput(lhs);
     AddInput(rhs);
+    lhs->AddUser(this);
+    rhs->AddUser(this);
   }
 };
 } // namespace ir::instr

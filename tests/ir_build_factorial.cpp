@@ -4,7 +4,7 @@
 #include <iostream>
 
 int main() {
-  auto Graph = ir::MethodGraph("factorial");
+  auto Graph = ir::MethodGraph("factorial", 0);
   auto bbStart = Graph.AllocateBlock();
   bbStart->AllocateInstr<ir::instr::PhiInstr>();
   std::cout << bbStart->GetInstrs().size() << std::endl;

@@ -7,7 +7,7 @@ namespace ir::instr {
 
 class ReturnInstr : public Instr {
 public:
-  explicit ReturnInstr() : Instr(InstrOpcode::RETURN) {}
+  explicit ReturnInstr(TypeId type) : Instr(InstrOpcode::RETURN, type) {}
 };
 
 } // namespace ir::instr

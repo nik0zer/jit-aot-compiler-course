@@ -7,7 +7,7 @@ namespace ir::instr {
 
 class PhiInstr : public Instr {
 public:
-  explicit PhiInstr() : Instr(InstrOpcode::PHI) {}
+  explicit PhiInstr(TypeId type) : Instr(InstrOpcode::PHI, type) {}
 };
 
 } // namespace ir::instr

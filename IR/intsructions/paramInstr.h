@@ -7,7 +7,7 @@ namespace ir::instr {
 
 class ParamInstr : public Instr {
 public:
-  explicit ParamInstr() : Instr(InstrOpcode::PARAM) {}
+  explicit ParamInstr(TypeId type) : Instr(InstrOpcode::PARAM, type) {}
 };
 
 } // namespace ir::instr

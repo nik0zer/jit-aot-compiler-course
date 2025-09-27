@@ -9,10 +9,10 @@ namespace ir::instr {
 
 class CallInstr : public Instr {
 public:
-  explicit CallInstr() : Instr(InstrOpcode::CALL) {}
+  explicit CallInstr(TypeId type) : Instr(InstrOpcode::CALL, type) {}
 
-  explicit CallInstr(MethodId id, std::vector<Instr *> &&args)
-      : Instr(InstrOpcode::CALL, std::move(args), {}), id_(id) {
+  explicit CallInstr(MethodId id, std::vector<Instr *> &&args, TypeId type)
+      : Instr(InstrOpcode::CALL, std::move(args), {}, type), id_(id) {
     for (auto arg : args) {
       arg->AddUser(this);
     }

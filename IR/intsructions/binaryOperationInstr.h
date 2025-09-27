@@ -6,9 +6,9 @@
 namespace ir::instr {
 class BinaryOperationInstr : public Instr {
 public:
-  BinaryOperationInstr() : Instr(InstrOpcode::BINARY_OPERATION) {}
-  BinaryOperationInstr(Instr *lhs, Instr *rhs)
-      : Instr(InstrOpcode::BINARY_OPERATION) {
+  BinaryOperationInstr(TypeId type) : Instr(InstrOpcode::BINARY_OPERATION, type) {}
+  BinaryOperationInstr(Instr *lhs, Instr *rhs, TypeId type)
+      : Instr(InstrOpcode::BINARY_OPERATION, type) {
     AddInput(lhs);
     AddInput(rhs);
     lhs->AddUser(this);

@@ -7,7 +7,9 @@ namespace ir::instr {
 
 class CastInstr : public Instr {
 public:
-  explicit CastInstr() : Instr(InstrOpcode::CAST) {}
+  explicit CastInstr(TypeId type) : Instr(InstrOpcode::CAST, type) {}
+
+  explicit CastInstr(Instr *input, TypeId type) : Instr(InstrOpcode::CAST, type) { AddInput(input); }
 };
 
 } // namespace ir::instr

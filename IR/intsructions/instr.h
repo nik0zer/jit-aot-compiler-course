@@ -22,14 +22,25 @@ enum class InstrOpcode {
 #undef DECLARE_NODE_TYPES
 };
 
+enum class TypeId {
+  U1,
+  U16,
+  U32,
+  I16,
+  I32,
+  I64,
+  F32,
+  F64
+};
+
 class Instr {
 public:
-  explicit Instr(InstrOpcode op)
-      : op_(op), prev_(nullptr), next_(nullptr), inputs_(), users_() {}
+  explicit Instr(InstrOpcode op, TypeId type)
+      : op_(op), prev_(nullptr), next_(nullptr), inputs_(), users_(), type_(type) {}
   explicit Instr(InstrOpcode op, const std::vector<Instr *> &&inputs,
-                 const std::vector<Instr *> &&users)
+                 const std::vector<Instr *> &&users, TypeId type)
       : op_(op), prev_(nullptr), next_(nullptr), inputs_(inputs),
-        users_(users) {}
+        users_(users), type_(type) {}
 
   void SetPrevInstr(Instr *instr) { prev_ = instr; }
   void SetNextInstr(Instr *instr) { next_ = instr; }
@@ -119,6 +130,7 @@ private:
   InstrOpcode op_;
   std::vector<Instr *> inputs_;
   std::vector<Instr *> users_;
+  TypeId type_;
 };
 
 } // namespace ir::instr

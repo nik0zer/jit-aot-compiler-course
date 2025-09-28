@@ -4,10 +4,12 @@
 #include "instr.h"
 
 namespace ir::instr {
+enum class BinaryOperation { ADD, SUB, MUL, DIV, AND, OR };
+
 class BinaryOperationInstr : public Instr {
 public:
-  BinaryOperationInstr(TypeId type) : Instr(InstrOpcode::BINARY_OPERATION, type) {}
-  BinaryOperationInstr(Instr *lhs, Instr *rhs, TypeId type)
+  BinaryOperationInstr(const BinaryOperation &op, Instr *lhs, Instr *rhs,
+                       TypeId type)
       : Instr(InstrOpcode::BINARY_OPERATION, type) {
     AddInput(lhs);
     AddInput(rhs);

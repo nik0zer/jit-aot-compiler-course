@@ -1,36 +1,47 @@
 #ifndef BASICBLOCK_H
 #define BASICBLOCK_H
 
-#include "intsructions/instr.h"
+#include "graph.h"
+#include "instructions/instr.h"
+#include <iostream>
 #include <vector>
 namespace ir {
 
 class BasicBlock {
 public:
-  explicit BasicBlock() {}
+  explicit BasicBlock(MethodGraph *parent) : parent_(parent) {}
 
   template <typename InstrType, typename... Args>
   instr::Instr *AllocateInstr(Args &&...args) {
     auto instr = new InstrType(std::forward<Args>(args)...);
-    if (!instrs_.empty()) {
-      instr->SetPrevInstr(instrs_.back());
-      instrs_.back()->SetNextInstr(instr);
+    instr->SetInstrId(parent_->GetNextInstrId());
+    if (first_ == nullptr) {
+      first_ = instr;
+      last_ = instr;
+      return instr;
     }
-    instrs_.push_back(instr);
+    last_->SetNextInstr(instr);
+    instr->SetPrevInstr(last_);
+    last_ = instr;
     return instr;
   }
-  const std::vector<instr::Instr *> &GetInstrs() const { return instrs_; }
+
+  const instr::Instr *GetFirstInstr() const { return first_; }
+  const instr::Instr *GetLastInstr() const { return last_; }
 
   ~BasicBlock() {
-    for (auto instr : instrs_) {
-      if (instr != nullptr) {
-        delete instr;
-      }
+    auto currentInstr = first_;
+    while (currentInstr != nullptr) {
+      auto nextInstr = currentInstr->GetNextInstr();
+      delete currentInstr;
+      currentInstr = nextInstr;
     }
   }
 
 private:
-  std::vector<instr::Instr *> instrs_;
+  MethodGraph *parent_;
+  instr::Instr *first_ = nullptr;
+  instr::Instr *last_ = nullptr;
 };
 
 } // namespace ir

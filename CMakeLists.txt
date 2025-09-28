@@ -7,13 +7,17 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(IR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/IR)
+set(INSTR_DIR ${IR_DIR}/instructions)
+set(UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils)
 
 set(IR_SOURCES
-
+${INSTR_DIR}/binaryOperationInstr.cpp
+${IR_DIR}/graph.cpp
 )
 
 set(IR_LIB_DIRS
 ${IR_DIR}
+${UTIL_DIR}
 )
 
 add_subdirectory(tests)

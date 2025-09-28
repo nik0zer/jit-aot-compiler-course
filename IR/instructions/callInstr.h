@@ -11,8 +11,8 @@ class CallInstr : public Instr {
 public:
   explicit CallInstr(TypeId type) : Instr(InstrOpcode::CALL, type) {}
 
-  explicit CallInstr(MethodId id, std::vector<Instr *> &&args, TypeId type)
-      : Instr(InstrOpcode::CALL, std::move(args), {}, type), id_(id) {
+  explicit CallInstr(MethodId id, TypeId type, std::vector<Instr *> &&args)
+      : Instr(InstrOpcode::CALL, type, std::move(args), {}), id_(id) {
     for (auto arg : args) {
       arg->AddUser(this);
     }

@@ -43,6 +43,8 @@ Calculate result of given operation between two input instructions
 ``` 4.u32 sub v1 v3 ```  
 ``` 4.u32 mul v1 v3 ```  
 ``` 4.u32 div v1 v3 ```  
+``` 4.u32 and v1 v3 ```  
+``` 4.u32 or v1 v3 ```  
 
 ### RETURN INSTRUCTION
 

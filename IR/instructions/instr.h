@@ -2,16 +2,16 @@
 #define INSTR_H
 
 #include "instrMapping.h"
+#include "type.h"
 #include <cstddef>
 #include <vector>
-#include "type.h"
 
 namespace ir {
 class BasicBlock;
-class MethodGraph;
 } // namespace ir
 
 namespace ir::instr {
+using InstrId = std::size_t;
 
 #define DECLARE_INSTR_CLASSES(instrType, className) class className;
 INSTR_MAPPING(DECLARE_INSTR_CLASSES)
@@ -24,13 +24,19 @@ enum class InstrOpcode {
 };
 
 class Instr {
-public:
+protected:
   explicit Instr(InstrOpcode op, TypeId type)
-      : op_(op), prev_(nullptr), next_(nullptr), inputs_(), users_(), type_(type) {}
-  explicit Instr(InstrOpcode op, const std::vector<Instr *> &&inputs,
-                 const std::vector<Instr *> &&users, TypeId type)
-      : op_(op), prev_(nullptr), next_(nullptr), inputs_(inputs),
-        users_(users), type_(type) {}
+      : op_(op), prev_(nullptr), next_(nullptr), inputs_(), users_(),
+        type_(type) {}
+  explicit Instr(InstrOpcode op, TypeId type,
+                 const std::vector<Instr *> &&inputs,
+                 const std::vector<Instr *> &&users)
+      : op_(op), prev_(nullptr), next_(nullptr), inputs_(inputs), users_(users),
+        type_(type) {}
+
+public:
+  void SetInstrId(InstrId id) { id_ = id; }
+  InstrId GetInstrId() const { return id_; }
 
   void SetPrevInstr(Instr *instr) { prev_ = instr; }
   void SetNextInstr(Instr *instr) { next_ = instr; }
@@ -114,7 +120,8 @@ public:
   INSTR_MAPPING(DECLARE_AS_CHECKS)
 #undef DECLARE_AS_CHECKS
 
-private:
+protected:
+  InstrId id_;
   Instr *prev_{nullptr};
   Instr *next_{nullptr};
   InstrOpcode op_;

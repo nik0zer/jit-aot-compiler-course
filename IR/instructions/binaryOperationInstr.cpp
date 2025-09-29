@@ -30,10 +30,7 @@ void BinaryOperationInstr::Dump(IrDumper &dumper) {
   dumper.Add(" ");
   dumper.Add(BinaryOperationToString(op_).data());
   dumper.Add(" ");
-  DumpInput(dumper, inputs_[0]);
-  dumper.Add(" ");
-  DumpInput(dumper, inputs_[1]);
-  dumper.Add(" ");
+  DumpInputs(dumper);
 }
 
 } // namespace ir::instr

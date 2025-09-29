@@ -9,7 +9,7 @@ namespace ir {
 
 class BasicBlock {
 public:
-  explicit BasicBlock(MethodGraph *parent) : parent_(parent) {}
+  explicit BasicBlock(MethodGraph *parent, BlockId id) : parent_(parent), id_(id) {}
 
   template <typename InstrType, typename... Args>
   instr::Instr *AllocateInstr(Args &&...args) {
@@ -51,7 +51,14 @@ public:
   }
 
   const instr::Instr *GetFirstInstr() const { return first_; }
+  const instr::Instr *GetLastPhiInstr() const { return lastPhi_; }
+  const instr::Instr *GetFirstNonPhiInstr() const { return firstNonPhi_; }
   const instr::Instr *GetLastInstr() const { return last_; }
+
+  void Dump(IrDumper &dumper);
+
+  void SetId(BlockId id) { id_ = id; }
+  BlockId GetId() const { return id_; }
 
   ~BasicBlock() {
     auto currentInstr = first_;
@@ -64,6 +71,7 @@ public:
 
 private:
   MethodGraph *parent_;
+  BlockId id_ {0};
   instr::Instr *first_ {nullptr};
   instr::Instr *lastPhi_ {nullptr};
   instr::Instr *firstNonPhi_ {nullptr};

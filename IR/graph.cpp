@@ -4,7 +4,7 @@
 namespace ir {
 
 BasicBlock *MethodGraph::AllocateBlock() {
-  auto block = new BasicBlock(this);
+  auto block = new BasicBlock(this, GetNextBlockId());
   blocks_.push_back(block);
   return block;
 }

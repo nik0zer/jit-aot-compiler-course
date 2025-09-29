@@ -128,9 +128,16 @@ public:
 #undef DECLARE_AS_CHECKS
 
 protected:
-  void DumpInput(IrDumper &dumper, Instr *input) {
+  inline void DumpInput(IrDumper &dumper, Instr *input) {
     dumper.Add("v");
     dumper.Add(input->GetInstrId());
+  }
+
+  inline void DumpInputs(IrDumper &dumper) {
+    for (auto input : inputs_) {
+      DumpInput(dumper, input);
+      dumper.Add(" ");
+    }
   }
 
   InstrId id_;

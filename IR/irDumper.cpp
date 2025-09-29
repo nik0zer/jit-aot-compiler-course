@@ -7,6 +7,7 @@ namespace ir {
 void IrDumper::Add(const std::string &str) { ss_ << str; }
 void IrDumper::Add(size_t num) { ss_ << std::to_string(num); }
 void IrDumper::Add(long num) { ss_ << std::to_string(num); }
+void IrDumper::Add(double num) { ss_ << std::to_string(num); }
 
 void IrDumper::Endl() {
     ss_ << std::endl;

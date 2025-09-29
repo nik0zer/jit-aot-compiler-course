@@ -15,6 +15,7 @@ public:
   void Add(const std::string &str);
   void Add(size_t num);
   void Add(long num);
+  void Add(double num);
   void Endl();
   void IncreaseIndent();
   void DecreaseIndent();

@@ -13,8 +13,11 @@ set(UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils)
 set(IR_SOURCES
 ${INSTR_DIR}/binaryOperationInstr.cpp
 ${INSTR_DIR}/callInstr.cpp
+${INSTR_DIR}/castInstr.cpp
+${INSTR_DIR}/constantInstr.cpp
 ${IR_DIR}/graph.cpp
 ${IR_DIR}/irDumper.cpp
+${IR_DIR}/basicBlock.cpp
 )
 
 set(IR_LIB_DIRS

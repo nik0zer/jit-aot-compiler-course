@@ -9,13 +9,13 @@ namespace ir::instr {
 
 class JumpInstr : public Instr {
 public:
-  explicit JumpInstr(TypeId type, LabelId target)
-      : Instr(InstrOpcode::JUMP, type), target_(target) {}
+  explicit JumpInstr(BasicBlock *target)
+      : Instr(InstrOpcode::JUMP, TypeId::U32), target_(target) {}
 
   bool IsControllFlow() override final { return true; }
 
 private:
-  LabelId target_;
+  BasicBlock *target_;
 };
 
 } // namespace ir::instr

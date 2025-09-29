@@ -2,13 +2,15 @@
 #define GRAPH_H
 
 #include "instructions/instr.h"
+#include "macro.h"
 #include <cstddef>
 #include <string>
+#include <limits>
 
 namespace ir {
 using MethodId = std::size_t;
-using LabelId = std::size_t;
 using ParamId = std::size_t;
+using BlockId = std::size_t;
 
 class MethodGraph {
 public:
@@ -24,7 +26,20 @@ public:
 
   const std::string &GetName() const { return name_; }
 
-  instr::InstrId GetNextInstrId() { return freeId_++; }
+  instr::InstrId GetNextInstrId() {
+    auto freeId = freeId_++;
+    if(freeId == std::numeric_limits<instr::InstrId>::max()) {
+      UNREACHABLE();
+    }
+    return freeId;
+  }
+  instr::InstrId GetNextBlockId() {
+    auto freeId = freeBlockId_++;
+    if(freeId == std::numeric_limits<instr::InstrId>::max()) {
+      UNREACHABLE();
+    }
+    return freeId;
+  }
 
   ~MethodGraph();
 
@@ -33,6 +48,7 @@ private:
   std::string name_;
   MethodId id_;
   instr::InstrId freeId_{0};
+  BlockId freeBlockId_{0};
 };
 
 } // namespace ir

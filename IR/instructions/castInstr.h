@@ -7,12 +7,12 @@ namespace ir::instr {
 
 class CastInstr : public Instr {
 public:
-  explicit CastInstr(TypeId type) : Instr(InstrOpcode::CAST, type) {}
-
-  explicit CastInstr(Instr *input, TypeId type)
+  explicit CastInstr(TypeId type, Instr *input)
       : Instr(InstrOpcode::CAST, type) {
     AddInput(input);
   }
+
+  void Dump(IrDumper &dumper) override;
 };
 
 } // namespace ir::instr

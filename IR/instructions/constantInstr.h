@@ -22,21 +22,23 @@ public:
     value_ = value;
   }
 
-  template <typename T> void SetValue(T value) {
+  template <typename T> inline void SetValue(T value) {
     if (!CanGetValue<T>()) {
       type_ = GetTypeId<T>();
     }
     value_ = value;
   }
 
-  template <typename T> T GetValue() const {
+  template <typename T> inline T GetValue() const {
     ASSERT(CanGetValue<T>());
     return std::get<T>(value_);
   }
 
-  template <typename T> bool CanGetValue() const {
+  template <typename T> inline bool CanGetValue() const {
     return std::holds_alternative<T>(value_);
   }
+
+  void Dump(IrDumper &dumper) override;
 
 private:
   std::variant<std::monostate, uint8_t, uint16_t, uint32_t, uint64_t, int8_t,

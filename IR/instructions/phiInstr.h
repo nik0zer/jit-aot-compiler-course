@@ -7,7 +7,9 @@ namespace ir::instr {
 
 class PhiInstr : public Instr {
 public:
-  explicit PhiInstr(TypeId type, std::vector<Instr *> &&inputs)
+  explicit PhiInstr(TypeId type, const std::vector<Instr *> &&inputs)
+      : Instr(InstrOpcode::PHI, type, std::move(inputs), {}) {}
+  explicit PhiInstr(TypeId type, const std::vector<Instr *> &inputs)
       : Instr(InstrOpcode::PHI, type, std::move(inputs), {}) {}
 };
 

@@ -5,6 +5,7 @@
 #include "type.h"
 #include <cstddef>
 #include <vector>
+#include "irDumper.h"
 
 namespace ir {
 class BasicBlock;
@@ -107,6 +108,12 @@ public:
 
   virtual bool IsControllFlow() { return false; }
 
+  virtual void Dump(IrDumper &dumper) {
+    dumper.Add(id_);
+    dumper.Add(".");
+    dumper.Add(TypeIdToString(type_).data());
+  }
+
 #define DECLARE_IS_CHECKS(instrType, className)                                \
   bool Is##className() const { return op_ == InstrOpcode::instrType; }
   INSTR_MAPPING(DECLARE_IS_CHECKS)
@@ -121,6 +128,11 @@ public:
 #undef DECLARE_AS_CHECKS
 
 protected:
+  void DumpInput(IrDumper &dumper, Instr *input) {
+    dumper.Add("v");
+    dumper.Add(input->GetInstrId());
+  }
+
   InstrId id_;
   Instr *prev_{nullptr};
   Instr *next_{nullptr};

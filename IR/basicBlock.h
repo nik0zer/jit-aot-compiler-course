@@ -15,8 +15,32 @@ public:
   instr::Instr *AllocateInstr(Args &&...args) {
     auto instr = new InstrType(std::forward<Args>(args)...);
     instr->SetInstrId(parent_->GetNextInstrId());
+    if(instr->GetOpcode() == instr::InstrOpcode::PHI) {
+      if (first_ == nullptr) {
+        first_ = instr;
+        last_ = instr;
+        lastPhi_ = instr;
+        return instr;
+      }
+      if (lastPhi_ == nullptr) {
+        first_->SetPrevInstr(instr);
+        instr->SetNextInstr(first_);
+        firstNonPhi_ = first_;
+        first_ = instr;
+        lastPhi_ = instr;
+      }
+      lastPhi_->SetNextInstr(instr);
+      instr->SetPrevInstr(lastPhi_);
+      lastPhi_ = instr;
+      if(firstNonPhi_ != nullptr) {
+        instr->SetNextInstr(firstNonPhi_);
+        firstNonPhi_->SetPrevInstr(instr);
+      }
+      return instr;
+    }
     if (first_ == nullptr) {
       first_ = instr;
+      firstNonPhi_ = instr;
       last_ = instr;
       return instr;
     }
@@ -40,8 +64,10 @@ public:
 
 private:
   MethodGraph *parent_;
-  instr::Instr *first_ = nullptr;
-  instr::Instr *last_ = nullptr;
+  instr::Instr *first_ {nullptr};
+  instr::Instr *lastPhi_ {nullptr};
+  instr::Instr *firstNonPhi_ {nullptr};
+  instr::Instr *last_ {nullptr};
 };
 
 } // namespace ir

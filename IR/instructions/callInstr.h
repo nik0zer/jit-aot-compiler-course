@@ -11,8 +11,8 @@ class CallInstr : public Instr {
 public:
   explicit CallInstr(TypeId type) : Instr(InstrOpcode::CALL, type) {}
 
-  explicit CallInstr(MethodId id, TypeId type, std::vector<Instr *> &&args)
-      : Instr(InstrOpcode::CALL, type, std::move(args), {}), id_(id) {
+  explicit CallInstr(TypeId type, MethodId id, std::vector<Instr *> &&args)
+      : Instr(InstrOpcode::CALL, type, std::move(args), {}), methodId_(id) {
     for (auto arg : args) {
       arg->AddUser(this);
     }
@@ -20,8 +20,10 @@ public:
 
   bool IsControllFlow() override final { return true; }
 
+  void Dump(IrDumper &dumper) override;
+
 private:
-  MethodId id_;
+  MethodId methodId_;
 };
 
 } // namespace ir::instr

@@ -19,7 +19,7 @@ public:
   template <typename T>
   explicit ConstantInstr(TypeId type, T value)
       : Instr(InstrOpcode::CONSTANT, type) {
-    value_ = value;
+    AdjustValueTypeByTypeId(type, value);
   }
 
   template <typename T> inline void SetValue(T value) {
@@ -27,6 +27,11 @@ public:
       type_ = GetTypeId<T>();
     }
     value_ = value;
+  }
+
+  template <typename T> inline void SetValue(TypeId type, T value) {
+    type_ = type;
+    AdjustValueTypeByTypeId(type, value);
   }
 
   template <typename T> inline T GetValue() const {
@@ -41,6 +46,12 @@ public:
   void Dump(IrDumper &dumper) override;
 
 private:
+  template <typename T> void AdjustValueTypeByTypeId(TypeId type, T value) {
+    VisitTypeId(type, [this, &value](auto ptr_type_tag) {
+      using ConcreteType = std::remove_pointer_t<decltype(ptr_type_tag)>;
+      value_ = static_cast<ConcreteType>(value);
+    });
+  };
   std::variant<std::monostate, uint8_t, uint16_t, uint32_t, uint64_t, int8_t,
                int16_t, int32_t, int64_t, float, double>
       value_;

@@ -1,7 +1,6 @@
 #include "basicBlock.h"
 #include "graph.h"
 #include "instructions/binaryOperationInstr.h"
-#include "instructions/callInstr.h"
 #include "instructions/castInstr.h"
 #include "instructions/constantInstr.h"
 #include "instructions/ifInstr.h"
@@ -9,7 +8,10 @@
 #include "instructions/paramInstr.h"
 #include "instructions/phiInstr.h"
 #include "instructions/returnInstr.h"
+#include "instructions/type.h"
 #include "irDumper.h"
+#include "util.h"
+#include <cstddef>
 #include <iostream>
 
 int main() {
@@ -60,7 +62,27 @@ int main() {
 
   bbRet->AllocateInstr<ir::instr::ReturnInstr>(ir::instr::TypeId::U64, phi_v0);
 
-  auto firstInstr = bbStart->GetFirstInstr();
+  RETURN_IF_NOT_OK(util::CheckEqual<size_t>(phi_v0->GetInputs().size(), 2,
+                                            "check phi v0 inputs size"));
+  RETURN_IF_NOT_OK(util::CheckEqual<size_t>(phi_v1->GetInputs().size(), 2,
+                                            "check phi v1 inputs size"));
+  RETURN_IF_NOT_OK(util::CheckTrue(
+      v0_const->AsConstantInstr()
+          ->CanGetValue<ir::instr::TypeIdToType_t<ir::instr::TypeId::U64>>(),
+      "check v0 const can get value with U64 type"));
+  RETURN_IF_NOT_OK(util::CheckTrue(
+      v1_const->AsConstantInstr()
+          ->CanGetValue<ir::instr::TypeIdToType_t<ir::instr::TypeId::U64>>(),
+      "check v1 const can get value with U64 type"));
+  RETURN_IF_NOT_OK(util::CheckEqual<unsigned long>(
+      v0_const->AsConstantInstr()
+          ->GetValue<ir::instr::TypeIdToType_t<ir::instr::TypeId::U64>>(),
+      1, "check v0 const value"));
+  RETURN_IF_NOT_OK(util::CheckEqual<unsigned long>(
+      v1_const->AsConstantInstr()
+          ->GetValue<ir::instr::TypeIdToType_t<ir::instr::TypeId::U64>>(),
+      2, "check v1 const value"));
+
   ir::IrDumper dumper(0);
   graph.Dump(dumper);
   dumper.Dump(std::cout);

@@ -51,16 +51,26 @@ template <> struct TypeIdToType<TypeId::F64> { using type = double; };
 
 inline const std::string_view TypeIdToString(TypeId type) {
   switch (type) {
-  case TypeId::U8: return "u8";
-  case TypeId::U16: return "u16";
-  case TypeId::U32: return "u32";
-  case TypeId::U64: return "u64";
-  case TypeId::I8: return "i8";
-  case TypeId::I16: return "i16";
-  case TypeId::I32: return "i32";
-  case TypeId::I64: return "i64";
-  case TypeId::F32: return "f32";
-  case TypeId::F64: return "f64";
+  case TypeId::U8:
+    return "u8";
+  case TypeId::U16:
+    return "u16";
+  case TypeId::U32:
+    return "u32";
+  case TypeId::U64:
+    return "u64";
+  case TypeId::I8:
+    return "i8";
+  case TypeId::I16:
+    return "i16";
+  case TypeId::I32:
+    return "i32";
+  case TypeId::I64:
+    return "i64";
+  case TypeId::F32:
+    return "f32";
+  case TypeId::F64:
+    return "f64";
   default:
     UNREACHABLE();
   }

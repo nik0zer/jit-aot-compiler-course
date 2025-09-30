@@ -11,6 +11,8 @@ public:
   explicit ParamInstr(TypeId type, ParamId id)
       : Instr(InstrOpcode::PARAM, type) {}
 
+  void Dump(IrDumper &dumper) override;
+
 private:
   ParamId id_;
 };

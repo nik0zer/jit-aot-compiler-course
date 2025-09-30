@@ -3,11 +3,11 @@
 namespace ir::instr {
 
 void CallInstr::Dump(IrDumper &dumper) {
-    Instr::Dump(dumper);
-    dumper.Add(" ");
-    dumper.Add(methodId_);
-    dumper.Add(" ");
-    DumpInputs(dumper);
+  Instr::Dump(dumper);
+  dumper.Add(" ");
+  dumper.Add(methodId_);
+  dumper.Add(" ");
+  DumpInputs(dumper);
 }
 
 } // namespace ir::instr

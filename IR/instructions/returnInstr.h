@@ -12,6 +12,8 @@ public:
     AddInput(input);
     input->AddUser(this);
   }
+
+  void Dump(IrDumper &dumper) override;
 };
 
 } // namespace ir::instr

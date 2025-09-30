@@ -27,4 +27,16 @@ MethodGraph::~MethodGraph() {
     }
   }
 }
+
+void MethodGraph::Dump(IrDumper &dumper) {
+  dumper.Add("method graph: ");
+  dumper.Add(name_);
+  dumper.IncreaseIndent();
+  dumper.Endl();
+  for (auto block : blocks_) {
+    block->Dump(dumper);
+    dumper.Endl();
+  }
+  dumper.DecreaseIndent();
+}
 } // namespace ir

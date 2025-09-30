@@ -4,8 +4,8 @@
 #include "instructions/instr.h"
 #include "macro.h"
 #include <cstddef>
-#include <string>
 #include <limits>
+#include <string>
 
 namespace ir {
 using MethodId = std::size_t;
@@ -28,18 +28,20 @@ public:
 
   instr::InstrId GetNextInstrId() {
     auto freeId = freeId_++;
-    if(freeId == std::numeric_limits<instr::InstrId>::max()) {
+    if (freeId == std::numeric_limits<instr::InstrId>::max()) {
       UNREACHABLE();
     }
     return freeId;
   }
   instr::InstrId GetNextBlockId() {
     auto freeId = freeBlockId_++;
-    if(freeId == std::numeric_limits<instr::InstrId>::max()) {
+    if (freeId == std::numeric_limits<instr::InstrId>::max()) {
       UNREACHABLE();
     }
     return freeId;
   }
+
+  void Dump(IrDumper &dumper);
 
   ~MethodGraph();
 

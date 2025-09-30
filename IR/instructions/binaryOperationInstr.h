@@ -5,11 +5,12 @@
 #include "irDumper.h"
 
 namespace ir::instr {
-enum class BinaryOperation { ADD, SUB, MUL, DIV, AND, OR };
+enum class BinaryOperationType { ADD, SUB, MUL, DIV, AND, OR };
 
 class BinaryOperationInstr : public Instr {
 public:
-  BinaryOperationInstr(TypeId type, const BinaryOperation &op, Instr *lhs, Instr *rhs)
+  BinaryOperationInstr(TypeId type, const BinaryOperationType &op, Instr *lhs,
+                       Instr *rhs)
       : Instr(InstrOpcode::BINARY_OPERATION, type), op_(op) {
     AddInput(lhs);
     AddInput(rhs);
@@ -17,13 +18,13 @@ public:
     rhs->AddUser(this);
   }
 
-  void SetOperation(BinaryOperation op) { op_ = op; }
-  BinaryOperation GetOperation() const { return op_; }
+  void SetOperation(BinaryOperationType op) { op_ = op; }
+  BinaryOperationType GetOperation() const { return op_; }
 
   void Dump(IrDumper &dumper) override;
 
 private:
-  BinaryOperation op_;
+  BinaryOperationType op_;
 };
 } // namespace ir::instr
 

@@ -1,24 +1,24 @@
 #include "binaryOperationInstr.h"
 #include "instructions/instr.h"
+#include "irDumper.h"
 #include "macro.h"
 #include <cstddef>
 #include <string>
-#include "irDumper.h"
 
 namespace ir::instr {
-constexpr std::string_view BinaryOperationToString(BinaryOperation op) {
+constexpr std::string_view BinaryOperationToString(BinaryOperationType op) {
   switch (op) {
-  case BinaryOperation::ADD:
+  case BinaryOperationType::ADD:
     return "add";
-  case BinaryOperation::SUB:
+  case BinaryOperationType::SUB:
     return "sub";
-  case BinaryOperation::MUL:
+  case BinaryOperationType::MUL:
     return "mul";
-  case BinaryOperation::DIV:
+  case BinaryOperationType::DIV:
     return "div";
-  case BinaryOperation::AND:
+  case BinaryOperationType::AND:
     return "and";
-  case BinaryOperation::OR:
+  case BinaryOperationType::OR:
     return "or";
   }
   UNREACHABLE();

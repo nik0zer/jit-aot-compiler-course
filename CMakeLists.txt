@@ -15,6 +15,10 @@ ${INSTR_DIR}/binaryOperationInstr.cpp
 ${INSTR_DIR}/callInstr.cpp
 ${INSTR_DIR}/castInstr.cpp
 ${INSTR_DIR}/constantInstr.cpp
+${INSTR_DIR}/ifInstr.cpp
+${INSTR_DIR}/paramInstr.cpp
+${INSTR_DIR}/phiInstr.cpp
+${INSTR_DIR}/returnInstr.cpp
 ${IR_DIR}/graph.cpp
 ${IR_DIR}/irDumper.cpp
 ${IR_DIR}/basicBlock.cpp

@@ -2,10 +2,10 @@
 #define INSTR_H
 
 #include "instrMapping.h"
+#include "irDumper.h"
 #include "type.h"
 #include <cstddef>
 #include <vector>
-#include "irDumper.h"
 
 namespace ir {
 class BasicBlock;
@@ -51,11 +51,15 @@ public:
   const std::vector<Instr *> &GetInputs() const { return inputs_; }
   const std::vector<Instr *> &GetUsers() const { return users_; }
 
-  void AddInput(Instr *input) { inputs_.push_back(input); }
+  void AddInput(Instr *input) {
+    inputs_.push_back(input);
+    input->AddUser(this);
+  }
   void AddUser(Instr *user) { users_.push_back(user); }
 
   void AddInput(Instr *input, size_t index) {
     inputs_.insert(inputs_.begin() + index, input);
+    input->AddUser(this);
   }
   void AddUser(Instr *user, size_t index) {
     users_.insert(users_.begin() + index, user);
@@ -65,6 +69,9 @@ public:
     for (auto it = inputs_.begin(); it != inputs_.end(); ++it) {
       if (*it == input) {
         inputs_.erase(it);
+        if (*it != nullptr) {
+          (*it)->RemoveUser(this);
+        }
       }
     }
   }
@@ -78,6 +85,9 @@ public:
 
   void RemoveInput(Instr *input, size_t index) {
     inputs_.erase(inputs_.begin() + index);
+    if (input != nullptr) {
+      input->RemoveUser(this);
+    }
   }
   void RemoveUser(Instr *user, size_t index) {
     users_.erase(users_.begin() + index);
@@ -88,6 +98,9 @@ public:
     for (auto it = inputs_.begin(); it != inputs_.end(); ++it) {
       if (*it == input) {
         *it = newInput;
+        if (newInput != nullptr) {
+          newInput->AddUser(this);
+        }
         found = true;
       }
     }
@@ -102,6 +115,24 @@ public:
       }
     }
     return found;
+  }
+
+  bool ReplaceInput(Instr *newInput, size_t index) {
+    if (index < inputs_.size()) {
+      inputs_[index] = newInput;
+      if (newInput != nullptr) {
+        newInput->AddUser(this);
+      }
+      return true;
+    }
+    return false;
+  }
+  bool ReplaceUser(Instr *newUser, size_t index) {
+    if (index < users_.size()) {
+      users_[index] = newUser;
+      return true;
+    }
+    return false;
   }
 
   InstrOpcode GetOpcode() const { return op_; }
@@ -129,6 +160,9 @@ public:
 
 protected:
   inline void DumpInput(IrDumper &dumper, Instr *input) {
+    if (input == nullptr) {
+      return;
+    }
     dumper.Add("v");
     dumper.Add(input->GetInstrId());
   }

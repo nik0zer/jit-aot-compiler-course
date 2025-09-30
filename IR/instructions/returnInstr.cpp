@@ -1,11 +1,11 @@
-#include "castInstr.h"
+#include "returnInstr.h"
 #include "instructions/instr.h"
 
 namespace ir::instr {
 
-void CastInstr::Dump(IrDumper &dumper) {
+void ReturnInstr::Dump(IrDumper &dumper) {
   Instr::Dump(dumper);
-  dumper.Add(" cast ");
+  dumper.Add(" return ");
   DumpInputs(dumper);
 }
 

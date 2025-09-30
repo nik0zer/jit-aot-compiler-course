@@ -8,7 +8,6 @@
   _(BINARY_OPERATION, BinaryOperationInstr)                                    \
   _(RETURN, ReturnInstr)                                                       \
   _(CALL, CallInstr)                                                           \
-  _(JUMP, JumpInstr)                                                           \
   _(IF, IfInstr)                                                               \
   _(PHI, PhiInstr)
 

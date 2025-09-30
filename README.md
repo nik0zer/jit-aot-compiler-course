@@ -59,11 +59,6 @@ and return value from method
 v2 - method id  
 v3, v4 - parameters from input instructions  
 
-### JUMP INSTRUCTION
-
-Jump to instruction with given id  
-``` 7 jump v2 ```
-
 ### IF INSTRUCTION
 
 Compare two input values and if condition is true  

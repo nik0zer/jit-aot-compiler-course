@@ -4,9 +4,11 @@
 #include "graph.h"
 #include "instructions/instr.h"
 #include "irDumper.h"
+#include <array>
 #include <iostream>
 #include <vector>
 namespace ir {
+constexpr std::size_t MAX_NUM_OF_SUCCESSORS = 2;
 
 class BasicBlock {
 public:
@@ -58,10 +60,20 @@ public:
   void SetParent(MethodGraph *parent) { parent_ = parent; }
 
   void SetPreds(const std::vector<BasicBlock *> &preds) { preds_ = preds; }
-  void SetSuccs(const std::vector<BasicBlock *> &succs) { succs_ = succs; }
+  void SetPreds(std::vector<BasicBlock *> &&preds) {
+    preds_ = std::move(preds);
+  }
+  void SetSuccs(const std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &succs) {
+    succs_ = succs;
+  }
+  void SetSuccs(std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &&succs) {
+    succs_ = std::move(succs);
+  }
 
   const std::vector<BasicBlock *> &GetPreds() const { return preds_; }
-  const std::vector<BasicBlock *> &GetSuccs() const { return succs_; }
+  const std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &GetSuccs() const {
+    return succs_;
+  }
 
   const instr::Instr *GetFirstInstr() const { return first_; }
   const instr::Instr *GetLastPhiInstr() const { return lastPhi_; }
@@ -69,8 +81,6 @@ public:
   const instr::Instr *GetLastInstr() const { return last_; }
 
   void Dump(IrDumper &dumper);
-  void DumpRelativeBlocks(IrDumper &dumper,
-                          const std::vector<BasicBlock *> &blocks);
 
   void SetId(BlockId id) { id_ = id; }
   BlockId GetId() const { return id_; }
@@ -85,6 +95,9 @@ public:
   }
 
 private:
+  void DumpPredecessors(IrDumper &dumper);
+  void DumpSuccessors(IrDumper &dumper);
+
   MethodGraph *parent_;
   BlockId id_{0};
   instr::Instr *first_{nullptr};
@@ -92,7 +105,7 @@ private:
   instr::Instr *firstNonPhi_{nullptr};
   instr::Instr *last_{nullptr};
   std::vector<BasicBlock *> preds_;
-  std::vector<BasicBlock *> succs_;
+  std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> succs_;
 };
 
 } // namespace ir

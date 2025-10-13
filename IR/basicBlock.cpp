@@ -1,19 +1,44 @@
 #include "basicBlock.h"
 
 namespace ir {
-void BasicBlock::DumpRelativeBlocks(IrDumper &dumper,
-                                    const std::vector<BasicBlock *> &blocks) {
-  for (auto block : blocks) {
+void BasicBlock::DumpPredecessors(IrDumper &dumper) {
+  for (auto block : preds_) {
     dumper.Add("bb");
     dumper.Add(block->GetId());
-    if (block != blocks.back()) {
+    if (block != preds_.back()) {
+      dumper.Add(", ");
+    }
+  }
+}
+
+template<typename Iterator>
+static bool CheckNonNullElementInArray(Iterator startIterator, Iterator endIterator) {
+  for (auto it = startIterator; it != endIterator; ++it) {
+    if (*it != nullptr) {
+      return true;
+    }
+  }
+  return false;
+}
+void BasicBlock::DumpSuccessors(IrDumper &dumper) {
+  for (auto it = succs_.begin(); it != succs_.end(); ++it) {
+    auto block = *it;
+    if(block == nullptr) {
+      continue;
+    }
+    dumper.Add("bb");
+    dumper.Add(block->GetId());
+    if (std::next(it) == succs_.end()) {
+      break;
+    }
+    if(CheckNonNullElementInArray(std::next(it), succs_.end())) {
       dumper.Add(", ");
     }
   }
 }
 
 void BasicBlock::Dump(IrDumper &dumper) {
-  DumpRelativeBlocks(dumper, preds_);
+  DumpPredecessors(dumper);
   if (!preds_.empty()) {
     dumper.Add(" -> ");
   }
@@ -22,7 +47,7 @@ void BasicBlock::Dump(IrDumper &dumper) {
   if (!succs_.empty()) {
     dumper.Add(" -> ");
   }
-  DumpRelativeBlocks(dumper, succs_);
+  DumpSuccessors(dumper);
   dumper.IncreaseIndent();
   dumper.Endl();
   auto instr = first_;

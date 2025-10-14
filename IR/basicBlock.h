@@ -5,6 +5,7 @@
 #include "instructions/instr.h"
 #include "irDumper.h"
 #include <array>
+#include <cstddef>
 #include <iostream>
 #include <vector>
 namespace ir {
@@ -57,6 +58,40 @@ public:
     return instr;
   }
 
+  template <typename InstrType, typename... Args>
+  instr::Instr *AllocateInstrAt(size_t index, Args &&...args) {
+    if (first_ == nullptr) {
+      return nullptr;
+    }
+
+    auto insertInstr = first_;
+    for (size_t i = 0; i < index; i++) {
+      insertInstr = insertInstr->GetNextInstr();
+      if (insertInstr == nullptr) {
+        return nullptr;
+      }
+    }
+
+    return AllocateInstrAfter<InstrType>(insertInstr,
+                                         std::forward<Args>(args)...);
+  }
+
+  template <typename InstrType, typename... Args>
+  instr::Instr *AllocateInstrAfter(instr::Instr *insertInstr, Args &&...args) {
+    auto instr = new InstrType(std::forward<Args>(args)...);
+    instr->SetInstrId(parent_->GetNextInstrId());
+
+    auto nextInstr = insertInstr->GetNextInstr();
+    insertInstr->SetNextInstr(instr);
+    instr->SetPrevInstr(insertInstr);
+    instr->SetNextInstr(nextInstr);
+    if (nextInstr != nullptr) {
+      nextInstr->SetPrevInstr(instr);
+    }
+
+    return instr;
+  }
+
   void SetParent(MethodGraph *parent) { parent_ = parent; }
 
   void SetPreds(const std::vector<BasicBlock *> &preds) { preds_ = preds; }
@@ -104,8 +139,12 @@ private:
   instr::Instr *lastPhi_{nullptr};
   instr::Instr *firstNonPhi_{nullptr};
   instr::Instr *last_{nullptr};
-  std::vector<BasicBlock *> preds_;
-  std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> succs_;
+  std::vector<BasicBlock *> preds_{};
+  std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> succs_{};
+
+  std::vector<BasicBlock *> dominators_{};
+  std::vector<BasicBlock *> dominatedBlocks_{};
+  BasicBlock *iDominator_{nullptr};
 };
 
 } // namespace ir

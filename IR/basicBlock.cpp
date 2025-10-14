@@ -11,8 +11,9 @@ void BasicBlock::DumpPredecessors(IrDumper &dumper) {
   }
 }
 
-template<typename Iterator>
-static bool CheckNonNullElementInArray(Iterator startIterator, Iterator endIterator) {
+template <typename Iterator>
+static bool CheckNonNullElementInArray(Iterator startIterator,
+                                       Iterator endIterator) {
   for (auto it = startIterator; it != endIterator; ++it) {
     if (*it != nullptr) {
       return true;
@@ -23,7 +24,7 @@ static bool CheckNonNullElementInArray(Iterator startIterator, Iterator endItera
 void BasicBlock::DumpSuccessors(IrDumper &dumper) {
   for (auto it = succs_.begin(); it != succs_.end(); ++it) {
     auto block = *it;
-    if(block == nullptr) {
+    if (block == nullptr) {
       continue;
     }
     dumper.Add("bb");
@@ -31,7 +32,7 @@ void BasicBlock::DumpSuccessors(IrDumper &dumper) {
     if (std::next(it) == succs_.end()) {
       break;
     }
-    if(CheckNonNullElementInArray(std::next(it), succs_.end())) {
+    if (CheckNonNullElementInArray(std::next(it), succs_.end())) {
       dumper.Add(", ");
     }
   }

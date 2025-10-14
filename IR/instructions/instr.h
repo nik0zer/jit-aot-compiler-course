@@ -5,6 +5,7 @@
 #include "irDumper.h"
 #include "type.h"
 #include <cstddef>
+#include <set>
 #include <vector>
 
 namespace ir {
@@ -30,13 +31,13 @@ protected:
       : op_(op), prev_(nullptr), next_(nullptr), inputs_(), users_(),
         type_(type) {}
   explicit Instr(InstrOpcode op, TypeId type, std::vector<Instr *> &&inputs,
-                 std::vector<Instr *> &&users)
+                 std::set<Instr *> &&users)
       : op_(op), prev_(nullptr), next_(nullptr), inputs_(std::move(inputs)),
         users_(std::move(users)), type_(type) {}
 
   explicit Instr(InstrOpcode op, TypeId type,
                  const std::vector<Instr *> &inputs,
-                 const std::vector<Instr *> &users)
+                 const std::set<Instr *> &users)
       : op_(op), prev_(nullptr), next_(nullptr), inputs_(inputs), users_(users),
         type_(type) {}
 
@@ -50,52 +51,60 @@ public:
   Instr *GetPrevInstr() const { return prev_; }
   Instr *GetNextInstr() const { return next_; }
 
-  void SetInputs(const std::vector<Instr *> &&inputs) { inputs_ = inputs; }
-  void SetUsers(const std::vector<Instr *> &&users) { users_ = users; }
+  void SetInputs(const std::vector<Instr *> &&inputs) {
+    inputs_ = inputs;
+    for (auto input : inputs_) {
+      if (input != nullptr) {
+        input->AddUser(this);
+      }
+    }
+  }
 
   const std::vector<Instr *> &GetInputs() const { return inputs_; }
-  const std::vector<Instr *> &GetUsers() const { return users_; }
+  const std::set<Instr *> &GetUsers() const { return users_; }
 
   void AddInput(Instr *input) {
     inputs_.push_back(input);
-    input->AddUser(this);
+    if (input != nullptr) {
+      input->AddUser(this);
+    }
   }
-  void AddUser(Instr *user) { users_.push_back(user); }
 
-  void AddInput(Instr *input, size_t index) {
+  void SetInput(Instr *input, size_t index) {
     inputs_.insert(inputs_.begin() + index, input);
-    input->AddUser(this);
-  }
-  void AddUser(Instr *user, size_t index) {
-    users_.insert(users_.begin() + index, user);
+    if (input != nullptr) {
+      input->AddUser(this);
+    }
   }
 
-  void RemoveInput(Instr *input) {
+  bool RemoveInput(Instr *input) {
+    if (input == nullptr) {
+      return false;
+    }
+    bool found = false;
     for (auto it = inputs_.begin(); it != inputs_.end(); ++it) {
       if (*it == input) {
-        inputs_.erase(it);
-        if (*it != nullptr) {
+        *it = nullptr;
+        if (!found) {
           (*it)->RemoveUser(this);
         }
+        found = true;
       }
     }
-  }
-  void RemoveUser(Instr *user) {
-    for (auto it = users_.begin(); it != users_.end(); ++it) {
-      if (*it == user) {
-        users_.erase(it);
-      }
-    }
+    return found;
   }
 
-  void RemoveInput(Instr *input, size_t index) {
-    inputs_.erase(inputs_.begin() + index);
+  bool RemoveInput(size_t index) {
+    if (index >= inputs_.size()) {
+      return false;
+    }
+    auto input = inputs_[index];
+    inputs_[index] = nullptr;
     if (input != nullptr) {
       input->RemoveUser(this);
+      return true;
     }
-  }
-  void RemoveUser(Instr *user, size_t index) {
-    users_.erase(users_.begin() + index);
+    return false;
   }
 
   bool ReplaceInput(Instr *input, Instr *newInput) {
@@ -109,15 +118,8 @@ public:
         found = true;
       }
     }
-    return found;
-  }
-  bool ReplaceUser(Instr *user, Instr *newUser) {
-    bool found = false;
-    for (auto it = users_.begin(); it != users_.end(); ++it) {
-      if (*it == user) {
-        *it = newUser;
-        found = true;
-      }
+    if (found && input != nullptr) {
+      input->RemoveUser(this);
     }
     return found;
   }
@@ -132,13 +134,9 @@ public:
     }
     return false;
   }
-  bool ReplaceUser(Instr *newUser, size_t index) {
-    if (index < users_.size()) {
-      users_[index] = newUser;
-      return true;
-    }
-    return false;
-  }
+
+  void RemoveUser(Instr *user) { users_.erase(user); }
+  void AddUser(Instr *user) { users_.insert(user); }
 
   InstrOpcode GetOpcode() const { return op_; }
 
@@ -184,7 +182,7 @@ protected:
   Instr *next_{nullptr};
   InstrOpcode op_;
   std::vector<Instr *> inputs_;
-  std::vector<Instr *> users_;
+  std::set<Instr *> users_;
   TypeId type_;
 };
 

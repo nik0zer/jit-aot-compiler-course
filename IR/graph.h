@@ -46,6 +46,9 @@ public:
   ~MethodGraph();
 
 private:
+  std::vector<BasicBlock *> DFSPO(BasicBlock *startBlock = nullptr);
+  std::vector<BasicBlock *> RPO(BasicBlock *startBlock = nullptr);
+
   std::vector<BasicBlock *> blocks_;
   std::string name_;
   MethodId id_;

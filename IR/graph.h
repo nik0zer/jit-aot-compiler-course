@@ -45,9 +45,10 @@ public:
 
   ~MethodGraph();
 
-private:
-  std::vector<BasicBlock *> DFSPO(BasicBlock *startBlock = nullptr);
   std::vector<BasicBlock *> RPO(BasicBlock *startBlock = nullptr);
+  std::vector<BasicBlock *> DFSPO(BasicBlock *startBlock = nullptr);
+  void DumpRPO(IrDumper &dumper, BasicBlock *startBlock = nullptr);
+private:
 
   std::vector<BasicBlock *> blocks_;
   std::string name_;

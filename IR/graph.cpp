@@ -1,6 +1,7 @@
 #include "graph.h"
 #include "basicBlock.h"
 #include <algorithm>
+#include <cstddef>
 
 namespace ir {
 
@@ -73,4 +74,15 @@ std::vector<BasicBlock *> MethodGraph::RPO(BasicBlock *startBlock) {
   std::reverse(result.begin(), result.end());
   return result;
 }
+
+void MethodGraph::DumpRPO(IrDumper &dumper, BasicBlock *startBlock) {
+  size_t index = 0;
+  for (auto block : RPO(startBlock)) {
+    dumper.Add(index++);
+    dumper.Add(". bb ");
+    dumper.Add(block->GetId());
+    dumper.Endl();
+  }
+}
+
 } // namespace ir

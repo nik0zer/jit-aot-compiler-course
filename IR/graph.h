@@ -7,6 +7,11 @@
 #include <limits>
 #include <string>
 
+namespace Analyzer {
+class DominatorAnalyzer;
+class DominatorTree;
+} // namespace Analyzer
+
 namespace ir {
 using MethodId = std::size_t;
 using ParamId = std::size_t;
@@ -45,10 +50,10 @@ public:
 
   ~MethodGraph();
 
-private:
-  std::vector<BasicBlock *> DFSPO(BasicBlock *startBlock = nullptr);
-  std::vector<BasicBlock *> RPO(BasicBlock *startBlock = nullptr);
+  friend class Analyzer::DominatorAnalyzer;
+  friend class Analyzer::DominatorTree;
 
+private:
   std::vector<BasicBlock *> blocks_;
   std::string name_;
   MethodId id_;

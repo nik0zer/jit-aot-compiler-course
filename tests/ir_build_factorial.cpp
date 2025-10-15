@@ -10,7 +10,7 @@
 #include "instructions/returnInstr.h"
 #include "instructions/type.h"
 #include "irDumper.h"
-#include "util.h"
+#include "test_utils/util.h"
 #include <cstddef>
 #include <iostream>
 

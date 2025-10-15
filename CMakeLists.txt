@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(IR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/IR)
+set(ANALYZERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Analyzers)
 set(INSTR_DIR ${IR_DIR}/instructions)
 set(UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils)
 
@@ -24,9 +25,18 @@ ${IR_DIR}/irDumper.cpp
 ${IR_DIR}/basicBlock.cpp
 )
 
+set(ANALYZERS_SOURCES
+${ANALYZERS_DIR}/dominatorAnalyzer.cpp
+${ANALYZERS_DIR}/util.cpp
+)
+
 set(IR_LIB_DIRS
 ${IR_DIR}
 ${UTIL_DIR}
+)
+
+set(ANALYZERS_LIB_DIRS
+${ANALYZERS_DIR}
 )
 
 add_subdirectory(tests)

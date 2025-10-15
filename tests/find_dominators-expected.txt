@@ -1,0 +1,156 @@
+method graph: Example 1
+    basic block 0 -> bb1
+        
+    basic block 1 -> bb2, bb5
+        
+    basic block 2 -> bb3
+        
+    basic block 3 -> 
+        
+    basic block 4 -> bb3
+        
+    basic block 5 -> bb4, bb6
+        
+    basic block 6 -> bb3
+        
+    
+0. bb 0
+1. bb 1
+2. bb 5
+3. bb 6
+4. bb 4
+5. bb 2
+6. bb 3
+
+
+0. bb 0 has dominators: ; ; dominator for: bb 1, bb 5, bb 6, bb 4, bb 2, bb 3
+1. bb 1 has dominators: bb 0; idominator: 0; dominator for: bb 5, bb 6, bb 4, bb 2, bb 3
+2. bb 5 has dominators: bb 0, bb 1; idominator: 1; dominator for: bb 6, bb 4
+3. bb 6 has dominators: bb 0, bb 1, bb 5; idominator: 5; dominator for: 
+4. bb 4 has dominators: bb 0, bb 1, bb 5; idominator: 5; dominator for: 
+5. bb 2 has dominators: bb 0, bb 1; idominator: 1; dominator for: 
+6. bb 3 has dominators: bb 0, bb 1; idominator: 1; dominator for: 
+
+Dominator tree for graph: Example 1
+    0. bb 0
+        1. bb 1
+            2. bb 5
+                3. bb 6
+                4. bb 4
+            5. bb 2
+            6. bb 3
+
+method graph: Example 2
+    basic block 0 -> bb1
+        
+    basic block 1 -> bb2, bb9
+        
+    basic block 2 -> bb3
+        
+    basic block 3 -> bb4, bb2
+        
+    basic block 4 -> bb5
+        
+    basic block 5 -> bb6, bb4
+        
+    basic block 6 -> bb7, bb8
+        
+    basic block 7 -> bb1
+        
+    basic block 8 -> bb10
+        
+    basic block 9 -> bb2
+        
+    basic block 10 -> 
+        
+    
+0. bb 0
+1. bb 1
+2. bb 9
+3. bb 2
+4. bb 3
+5. bb 4
+6. bb 5
+7. bb 6
+8. bb 8
+9. bb 10
+10. bb 7
+
+
+0. bb 0 has dominators: ; ; dominator for: bb 1, bb 9, bb 2, bb 3, bb 4, bb 5, bb 6, bb 8, bb 10, bb 7
+1. bb 1 has dominators: bb 0; idominator: 0; dominator for: bb 9, bb 2, bb 3, bb 4, bb 5, bb 6, bb 8, bb 10, bb 7
+2. bb 9 has dominators: bb 0, bb 1; idominator: 1; dominator for: 
+3. bb 2 has dominators: bb 0, bb 1; idominator: 1; dominator for: bb 3, bb 4, bb 5, bb 6, bb 8, bb 10, bb 7
+4. bb 3 has dominators: bb 0, bb 1, bb 2; idominator: 2; dominator for: bb 4, bb 5, bb 6, bb 8, bb 10, bb 7
+5. bb 4 has dominators: bb 0, bb 1, bb 2, bb 3; idominator: 3; dominator for: bb 5, bb 6, bb 8, bb 10, bb 7
+6. bb 5 has dominators: bb 0, bb 1, bb 2, bb 3, bb 4; idominator: 4; dominator for: bb 6, bb 8, bb 10, bb 7
+7. bb 6 has dominators: bb 0, bb 1, bb 2, bb 3, bb 4, bb 5; idominator: 5; dominator for: bb 8, bb 10, bb 7
+8. bb 8 has dominators: bb 0, bb 1, bb 2, bb 3, bb 4, bb 5, bb 6; idominator: 6; dominator for: bb 10
+9. bb 10 has dominators: bb 0, bb 1, bb 2, bb 3, bb 4, bb 5, bb 6, bb 8; idominator: 8; dominator for: 
+10. bb 7 has dominators: bb 0, bb 1, bb 2, bb 3, bb 4, bb 5, bb 6; idominator: 6; dominator for: 
+
+Dominator tree for graph: Example 2
+    0. bb 0
+        1. bb 1
+            2. bb 9
+            3. bb 2
+                4. bb 3
+                    5. bb 4
+                        6. bb 5
+                            7. bb 6
+                                8. bb 8
+                                    9. bb 10
+                                10. bb 7
+
+method graph: Example 3
+    basic block 0 -> bb1
+        
+    basic block 1 -> bb2, bb4
+        
+    basic block 2 -> bb3
+        
+    basic block 3 -> bb6
+        
+    basic block 4 -> bb5, bb3
+        
+    basic block 5 -> bb7, bb1
+        
+    basic block 6 -> bb8, bb2
+        
+    basic block 7 -> bb6, bb8
+        
+    basic block 8 -> 
+        
+    
+0. bb 0
+1. bb 1
+2. bb 4
+3. bb 5
+4. bb 7
+5. bb 2
+6. bb 3
+7. bb 6
+8. bb 8
+
+
+0. bb 0 has dominators: ; ; dominator for: bb 1, bb 4, bb 5, bb 7, bb 2, bb 3, bb 6, bb 8
+1. bb 1 has dominators: bb 0; idominator: 0; dominator for: bb 4, bb 5, bb 7, bb 2, bb 3, bb 6, bb 8
+2. bb 4 has dominators: bb 0, bb 1; idominator: 1; dominator for: bb 5, bb 7
+3. bb 5 has dominators: bb 0, bb 1, bb 4; idominator: 4; dominator for: bb 7
+4. bb 7 has dominators: bb 0, bb 1, bb 4, bb 5; idominator: 5; dominator for: 
+5. bb 2 has dominators: bb 0, bb 1; idominator: 1; dominator for: 
+6. bb 3 has dominators: bb 0, bb 1; idominator: 1; dominator for: 
+7. bb 6 has dominators: bb 0, bb 1; idominator: 1; dominator for: 
+8. bb 8 has dominators: bb 0, bb 1; idominator: 1; dominator for: 
+
+Dominator tree for graph: Example 3
+    0. bb 0
+        1. bb 1
+            2. bb 4
+                3. bb 5
+                    4. bb 7
+            5. bb 2
+            6. bb 3
+            7. bb 6
+            8. bb 8
+

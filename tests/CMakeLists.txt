@@ -1,6 +1,6 @@
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils)
+set(UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_utils)
 
 set (TESTS_LIB_DIRS
     ${UTIL_DIR}
@@ -16,6 +16,7 @@ set(EXPECTED_MODE "EXPECTED")
 set(TESTS_DATA
     #"test_name test_file test_mode"
     "ir_build_factorial ir_build_factorial.cpp ${EXPECTED_MODE}"
+    "find_dominators find_dominators.cpp ${EXPECTED_MODE}"
 )
 
 foreach(TEST_DATA IN ITEMS ${TESTS_DATA})
@@ -24,8 +25,9 @@ foreach(TEST_DATA IN ITEMS ${TESTS_DATA})
     list(GET TEST_DATA_ELEM 1 TEST_SRC_FILE)
     list(GET TEST_DATA_ELEM 2 MODE)
 
-    add_executable(${TEST_NAME} ${TEST_SRC_FILE} ${IR_SOURCES} ${TESTS_LIB_SRCS})
+    add_executable(${TEST_NAME} ${TEST_SRC_FILE} ${IR_SOURCES} ${ANALYZERS_SOURCES} ${TESTS_LIB_SRCS})
     target_include_directories(${TEST_NAME} PRIVATE ${IR_LIB_DIRS})
+    target_include_directories(${TEST_NAME} PRIVATE ${ANALYZERS_LIB_DIRS})
     target_include_directories(${TEST_NAME} PRIVATE ${TESTS_LIB_DIRS})
 endforeach()
 

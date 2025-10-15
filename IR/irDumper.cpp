@@ -23,6 +23,14 @@ void IrDumper::DecreaseIndent() {
   }
 }
 
+void IrDumper::SetIndent(size_t indent) {
+  if (indent < 0) {
+    indent = 0;
+    return;
+  }
+  indent_ = indent;
+}
+
 void IrDumper::Indent() {
   for (size_t i = 0; i < indent_; ++i) {
     ss_ << "    ";
@@ -31,7 +39,10 @@ void IrDumper::Indent() {
 
 std::string IrDumper::GetDump() { return ss_.str(); }
 
-void IrDumper::Clear() { ss_.str(""); }
+void IrDumper::Clear() {
+  ss_.str("");
+  SetIndent(0);
+}
 
 void IrDumper::Dump(std::ostream &os) { os << ss_.str(); }
 

@@ -4,6 +4,7 @@
 #include "graph.h"
 #include "instructions/instr.h"
 #include "irDumper.h"
+#include "util.h"
 #include <array>
 #include <cstddef>
 #include <iostream>
@@ -129,6 +130,27 @@ public:
     }
   }
 
+  BasicBlock *GetIDominator() { return iDominator_; }
+  void SetIDominator(BasicBlock *iDominator) { iDominator_ = iDominator; }
+
+  const std::vector<Analyzer::BlockWithIndex> &GetDominators() const {
+    return dominators_;
+  }
+  void SetDominators(const std::vector<Analyzer::BlockWithIndex> &dominators) {
+    dominators_ = dominators;
+  }
+
+  const std::vector<Analyzer::BlockWithIndex> &GetDominatedBlocks() const {
+    return dominatedBlocks_;
+  }
+  void SetDominatedBlocks(
+      const std::vector<Analyzer::BlockWithIndex> &dominatedBlocks) {
+    dominatedBlocks_ = dominatedBlocks;
+  }
+
+  friend class MethodGraph;
+  friend class Analyzer::DominatorAnalyzer;
+
 private:
   void DumpPredecessors(IrDumper &dumper);
   void DumpSuccessors(IrDumper &dumper);
@@ -142,8 +164,8 @@ private:
   std::vector<BasicBlock *> preds_{};
   std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> succs_{};
 
-  std::vector<BasicBlock *> dominators_{};
-  std::vector<BasicBlock *> dominatedBlocks_{};
+  std::vector<Analyzer::BlockWithIndex> dominators_{};
+  std::vector<Analyzer::BlockWithIndex> dominatedBlocks_{};
   BasicBlock *iDominator_{nullptr};
 };
 

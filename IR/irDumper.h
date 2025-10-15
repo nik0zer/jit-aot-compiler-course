@@ -22,6 +22,7 @@ public:
   std::string GetDump();
   void Clear();
   void Dump(std::ostream &os);
+  void SetIndent(size_t indent);
 
 private:
   void Indent();

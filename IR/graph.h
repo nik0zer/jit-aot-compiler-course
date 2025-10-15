@@ -11,6 +11,7 @@ namespace ir {
 using MethodId = std::size_t;
 using ParamId = std::size_t;
 using BlockId = std::size_t;
+using BlockWithIndex = std::pair<BasicBlock *, size_t>;
 
 class MethodGraph {
 public:
@@ -45,10 +46,16 @@ public:
 
   ~MethodGraph();
 
-private:
-  std::vector<BasicBlock *> DFSPO(BasicBlock *startBlock = nullptr);
-  std::vector<BasicBlock *> RPO(BasicBlock *startBlock = nullptr);
+  std::vector<BlockWithIndex> RPO(BasicBlock *startBlock = nullptr,
+                                  BasicBlock *ignoredBlock = nullptr);
+  std::vector<BasicBlock *> DFSPO(BasicBlock *startBlock = nullptr,
+                                  BasicBlock *ignoredBlock = nullptr);
+  void DumpRPO(IrDumper &dumper, BasicBlock *startBlock = nullptr,
+               BasicBlock *ignoredBlock = nullptr);
+  void FindDominators(BasicBlock *startBlock = nullptr);
+  void DumpDominators(IrDumper &dumper, BasicBlock *startBlock = nullptr);
 
+private:
   std::vector<BasicBlock *> blocks_;
   std::string name_;
   MethodId id_;

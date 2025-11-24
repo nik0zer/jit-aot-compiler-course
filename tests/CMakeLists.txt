@@ -25,9 +25,10 @@ foreach(TEST_DATA IN ITEMS ${TESTS_DATA})
     list(GET TEST_DATA_ELEM 1 TEST_SRC_FILE)
     list(GET TEST_DATA_ELEM 2 MODE)
 
-    add_executable(${TEST_NAME} ${TEST_SRC_FILE} ${IR_SOURCES} ${ANALYZERS_SOURCES} ${TESTS_LIB_SRCS})
+    add_executable(${TEST_NAME} ${TEST_SRC_FILE} ${IR_SOURCES} ${PASSES_SOURCES} ${ANALYZERS_SOURCES} ${TESTS_LIB_SRCS})
     target_include_directories(${TEST_NAME} PRIVATE ${IR_LIB_DIRS})
     target_include_directories(${TEST_NAME} PRIVATE ${ANALYZERS_LIB_DIRS})
+    target_include_directories(${TEST_NAME} PRIVATE ${PASSES_LIB_DIRS})
     target_include_directories(${TEST_NAME} PRIVATE ${TESTS_LIB_DIRS})
 endforeach()
 

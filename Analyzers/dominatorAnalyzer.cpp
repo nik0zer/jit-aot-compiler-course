@@ -4,7 +4,7 @@
 #include "util.h"
 #include <algorithm>
 
-namespace Analyzer {
+namespace analyzer {
 
 static void DFSPOBlockVisit(ir::BasicBlock *block,
                             std::set<ir::BasicBlock *> &visited,
@@ -215,4 +215,4 @@ void DominatorTree::Dump(ir::IrDumper &dumper) {
   dumper.DecreaseIndent();
 }
 
-} // namespace Analyzer
+} // namespace analyzer

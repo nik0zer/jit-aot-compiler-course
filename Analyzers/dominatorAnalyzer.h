@@ -4,7 +4,7 @@
 #include "graph.h"
 #include "util.h"
 
-namespace Analyzer {
+namespace analyzer {
 class DominatorAnalyzer {
 public:
   explicit DominatorAnalyzer(const ir::MethodGraph &graph) : graph_(graph) {}
@@ -59,6 +59,6 @@ private:
   const ir::MethodGraph &graph_;
 };
 
-} // namespace Analyzer
+} // namespace analyzer
 
 #endif

@@ -5,7 +5,7 @@
 #include "irDumper.h"
 
 namespace ir::instr {
-enum class BinaryOperationType { ADD, SUB, MUL, DIV, AND, OR };
+enum class BinaryOperationType { ADD, SUB, MUL, DIV, AND, OR, ASHR };
 
 class BinaryOperationInstr : public Instr {
 public:

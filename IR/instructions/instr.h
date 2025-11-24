@@ -161,6 +161,8 @@ public:
   INSTR_MAPPING(DECLARE_AS_CHECKS)
 #undef DECLARE_AS_CHECKS
 
+  TypeId GetType() const { return type_; }
+
 protected:
   inline void DumpInput(IrDumper &dumper, Instr *input) {
     if (input == nullptr) {

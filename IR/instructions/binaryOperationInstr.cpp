@@ -20,6 +20,8 @@ constexpr std::string_view BinaryOperationToString(BinaryOperationType op) {
     return "and";
   case BinaryOperationType::OR:
     return "or";
+  case BinaryOperationType::ASHR:
+    return "ashr";
   }
   UNREACHABLE();
   return "";

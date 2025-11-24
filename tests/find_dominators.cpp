@@ -27,7 +27,7 @@ int main() {
     bbG->SetSuccs({bbD});
 
     ir::IrDumper dumper(0);
-    Analyzer::DominatorAnalyzer domAnalyzer(graph);
+    analyzer::DominatorAnalyzer domAnalyzer(graph);
     graph.Dump(dumper);
     dumper.Dump(std::cout);
     dumper.Clear();
@@ -39,7 +39,7 @@ int main() {
     dumper.Endl();
     domAnalyzer.DumpDominators(dumper, bbA);
     dumper.Endl();
-    Analyzer::DominatorTree domTree(graph, bbA);
+    analyzer::DominatorTree domTree(graph, bbA);
     domTree.Dump(dumper);
     dumper.Endl();
     dumper.Endl();
@@ -87,7 +87,7 @@ int main() {
     bbJ->SetSuccs({bbC});
 
     ir::IrDumper dumper(0);
-    Analyzer::DominatorAnalyzer domAnalyzer(graph);
+    analyzer::DominatorAnalyzer domAnalyzer(graph);
     graph.Dump(dumper);
     dumper.Dump(std::cout);
     dumper.Clear();
@@ -99,7 +99,7 @@ int main() {
     dumper.Endl();
     domAnalyzer.DumpDominators(dumper, bbA);
     dumper.Endl();
-    Analyzer::DominatorTree domTree(graph, bbA);
+    analyzer::DominatorTree domTree(graph, bbA);
     domTree.Dump(dumper);
     dumper.Endl();
     dumper.Endl();
@@ -153,7 +153,7 @@ int main() {
     bbI->SetSuccs({nullptr});
 
     ir::IrDumper dumper(0);
-    Analyzer::DominatorAnalyzer domAnalyzer(graph);
+    analyzer::DominatorAnalyzer domAnalyzer(graph);
     graph.Dump(dumper);
     dumper.Dump(std::cout);
     dumper.Clear();
@@ -165,7 +165,7 @@ int main() {
     dumper.Endl();
     domAnalyzer.DumpDominators(dumper, bbA);
     dumper.Endl();
-    Analyzer::DominatorTree domTree(graph, bbA);
+    analyzer::DominatorTree domTree(graph, bbA);
     domTree.Dump(dumper);
     dumper.Endl();
     dumper.Endl();

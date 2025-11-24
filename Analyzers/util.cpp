@@ -1,3 +1,3 @@
 #include "util.h"
 
-namespace Analyzer {} // namespace Analyzer
+namespace analyzer {} // namespace analyzer

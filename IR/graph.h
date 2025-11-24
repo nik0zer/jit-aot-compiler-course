@@ -7,10 +7,10 @@
 #include <limits>
 #include <string>
 
-namespace Analyzer {
+namespace analyzer {
 class DominatorAnalyzer;
 class DominatorTree;
-} // namespace Analyzer
+} // namespace analyzer
 
 namespace ir {
 using MethodId = std::size_t;
@@ -50,8 +50,8 @@ public:
 
   ~MethodGraph();
 
-  friend class Analyzer::DominatorAnalyzer;
-  friend class Analyzer::DominatorTree;
+  friend class analyzer::DominatorAnalyzer;
+  friend class analyzer::DominatorTree;
 
 private:
   std::vector<BasicBlock *> blocks_;

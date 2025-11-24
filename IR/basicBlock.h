@@ -93,6 +93,32 @@ public:
     return instr;
   }
 
+  void RemoveInstr(instr::Instr *instr) {
+    auto prevInstr = instr->GetPrevInstr();
+    auto nextInstr = instr->GetNextInstr();
+    if (instr == first_) {
+      first_ = nextInstr;
+    }
+    if (instr == lastPhi_) {
+      lastPhi_ = prevInstr;
+    }
+    if (instr == firstNonPhi_) {
+      firstNonPhi_ = nextInstr;
+    }
+    if (instr == last_) {
+      last_ = prevInstr;
+    }
+
+    if (prevInstr != nullptr) {
+      prevInstr->SetNextInstr(nextInstr);
+    }
+    if (nextInstr != nullptr) {
+      nextInstr->SetPrevInstr(prevInstr);
+    }
+
+    delete instr;
+  }
+
   void SetParent(MethodGraph *parent) { parent_ = parent; }
 
   void SetPreds(const std::vector<BasicBlock *> &preds) { preds_ = preds; }
@@ -116,6 +142,11 @@ public:
   const instr::Instr *GetFirstNonPhiInstr() const { return firstNonPhi_; }
   const instr::Instr *GetLastInstr() const { return last_; }
 
+  instr::Instr *GetFirstInstr() { return first_; }
+  instr::Instr *GetLastPhiInstr() { return lastPhi_; }
+  instr::Instr *GetFirstNonPhiInstr() { return firstNonPhi_; }
+  instr::Instr *GetLastInstr() { return last_; }
+
   void Dump(IrDumper &dumper);
 
   void SetId(BlockId id) { id_ = id; }
@@ -133,23 +164,23 @@ public:
   BasicBlock *GetIDominator() { return iDominator_; }
   void SetIDominator(BasicBlock *iDominator) { iDominator_ = iDominator; }
 
-  const std::vector<Analyzer::BlockWithIndex> &GetDominators() const {
+  const std::vector<analyzer::BlockWithIndex> &GetDominators() const {
     return dominators_;
   }
-  void SetDominators(const std::vector<Analyzer::BlockWithIndex> &dominators) {
+  void SetDominators(const std::vector<analyzer::BlockWithIndex> &dominators) {
     dominators_ = dominators;
   }
 
-  const std::vector<Analyzer::BlockWithIndex> &GetDominatedBlocks() const {
+  const std::vector<analyzer::BlockWithIndex> &GetDominatedBlocks() const {
     return dominatedBlocks_;
   }
   void SetDominatedBlocks(
-      const std::vector<Analyzer::BlockWithIndex> &dominatedBlocks) {
+      const std::vector<analyzer::BlockWithIndex> &dominatedBlocks) {
     dominatedBlocks_ = dominatedBlocks;
   }
 
   friend class MethodGraph;
-  friend class Analyzer::DominatorAnalyzer;
+  friend class analyzer::DominatorAnalyzer;
 
 private:
   void DumpPredecessors(IrDumper &dumper);
@@ -164,8 +195,8 @@ private:
   std::vector<BasicBlock *> preds_{};
   std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> succs_{};
 
-  std::vector<Analyzer::BlockWithIndex> dominators_{};
-  std::vector<Analyzer::BlockWithIndex> dominatedBlocks_{};
+  std::vector<analyzer::BlockWithIndex> dominators_{};
+  std::vector<analyzer::BlockWithIndex> dominatedBlocks_{};
   BasicBlock *iDominator_{nullptr};
 };
 

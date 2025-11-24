@@ -7,7 +7,20 @@
 #include <sys/types.h>
 #include <type_traits>
 namespace ir::instr {
-enum class TypeId { U8, U16, U32, U64, I8, I16, I32, I64, F32, F64, VOID, NONE };
+enum class TypeId {
+  U8,
+  I8,
+  I16,
+  U16,
+  I32,
+  U32,
+  F32,
+  I64,
+  U64,
+  F64,
+  VOID,
+  NONE
+};
 
 template <typename T> constexpr inline TypeId GetTypeId() {
   if constexpr (std::is_same_v<T, uint8_t>) {

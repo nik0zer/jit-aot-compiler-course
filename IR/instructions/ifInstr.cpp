@@ -22,7 +22,7 @@ constexpr std::string_view IfTypeToString(IfType type) {
 }
 
 void IfInstr::Dump(IrDumper &dumper) {
-  dumper.Add(id_);
+  Instr::Dump(dumper);
   dumper.Add(" if.");
   dumper.Add(IfTypeToString(type_).data());
   dumper.Add(" ");

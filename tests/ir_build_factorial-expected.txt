@@ -11,7 +11,7 @@ method graph: factorial
     bb1, bb3 -> basic block 2 -> bb3, bb4
         5.u64 phi v1 v8 
         6.u64 phi v3 v9 
-        7 if.le v5 v4 
+        7.void if.le v5 v4 
         
     bb2 -> basic block 3 -> bb2
         8.u64 mul v5 v6 

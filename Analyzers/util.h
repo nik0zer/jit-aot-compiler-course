@@ -8,10 +8,10 @@ namespace ir {
 class BasicBlock;
 }
 
-namespace Analyzer {
+namespace analyzer {
 
 using BlockWithIndex = std::pair<ir::BasicBlock *, size_t>;
 
-} // namespace Analyzer
+} // namespace analyzer
 
 #endif

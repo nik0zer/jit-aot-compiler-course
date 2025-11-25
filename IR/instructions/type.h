@@ -120,6 +120,38 @@ inline const std::string_view TypeIdToString(TypeId type) {
   return "";
 }
 
+inline const size_t TypeIdToSize(TypeId type) {
+  switch (type) {
+  case TypeId::U8:
+    return 8;
+  case TypeId::U16:
+    return 16;
+  case TypeId::U32:
+    return 32;
+  case TypeId::U64:
+    return 64;
+  case TypeId::I8:
+    return 8;
+  case TypeId::I16:
+    return 16;
+  case TypeId::I32:
+    return 32;
+  case TypeId::I64:
+    return 64;
+  case TypeId::F32:
+    return 32;
+  case TypeId::F64:
+    return 64;
+  case TypeId::VOID:
+    return 0;
+  case TypeId::NONE:
+    return 0;
+  default:
+    UNREACHABLE();
+  }
+  return 0;
+}
+
 template <typename Visitor> auto VisitTypeId(TypeId type, Visitor &&visitor) {
   switch (type) {
   case TypeId::U8:
@@ -146,8 +178,11 @@ template <typename Visitor> auto VisitTypeId(TypeId type, Visitor &&visitor) {
     return visitor(static_cast<void *>(nullptr));
   case TypeId::NONE:
     return visitor(static_cast<std::nullptr_t *>(nullptr));
+  default:
+    UNREACHABLE();
+    break;
   }
-  UNREACHABLE(); // В случае если придет невалидный TypeId
+  return visitor(static_cast<std::nullptr_t *>(nullptr));
 }
 
 } // namespace ir::instr

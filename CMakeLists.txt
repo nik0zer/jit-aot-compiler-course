@@ -33,6 +33,8 @@ ${ANALYZERS_DIR}/util.cpp
 
 set(PASSES_SOURCES
 ${PASSES_DIR}/constantFolding.cpp
+${PASSES_DIR}/pass.cpp
+${PASSES_DIR}/peepholes.cpp
 )
 
 set(IR_LIB_DIRS

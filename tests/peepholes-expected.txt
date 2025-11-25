@@ -1,0 +1,52 @@
+method graph: TestOptimizerPasses_2
+    basic block 0 -> bb1
+        0.i32 param 0
+        
+    bb0 -> basic block 1 -> bb2
+        1.i32 const 0
+        2.i32 const 32
+        3.i32 add v0 v1 
+        4.i64 cast v3 
+        5.i32 add v1 v0 
+        6.i64 cast v5 
+        
+    bb0 -> basic block 2 -> bb3
+        7.i32 or v0 v1 
+        8.i64 cast v7 
+        9.i32 or v1 v0 
+        10.i64 cast v9 
+        11.i32 or v0 v0 
+        12.i64 cast v11 
+        
+    bb0 -> basic block 3 -> bb4
+        13.i32 ashr v0 v2 
+        14.i64 cast v13 
+        15.i32 ashr v0 v1 
+        16.i64 cast v15 
+        
+    bb3 -> basic block 4 -> 
+        
+    
+method graph: TestOptimizerPasses_2
+    basic block 0 -> bb1
+        0.i32 param 0
+        
+    bb0 -> basic block 1 -> bb2
+        1.i32 const 0
+        2.i32 const 32
+        4.i64 cast v0 
+        6.i64 cast v0 
+        
+    bb0 -> basic block 2 -> bb3
+        8.i64 cast v0 
+        10.i64 cast v0 
+        12.i64 cast v0 
+        
+    bb0 -> basic block 3 -> bb4
+        17.i32 const 0
+        14.i64 cast v17 
+        16.i64 cast v0 
+        
+    bb3 -> basic block 4 -> 
+        
+    

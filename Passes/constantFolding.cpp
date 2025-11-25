@@ -7,6 +7,7 @@
 #include "instructions/constantInstr.h"
 #include "instructions/instr.h"
 #include "irDumper.h"
+#include "pass.h"
 #include <set>
 #include <vector>
 
@@ -24,16 +25,6 @@ void ConstantFolding::Run(ir::MethodGraph *graph) {
       changed |= processBlock(block.first);
     }
   } while (changed);
-}
-
-static void ChangeUsersInputs(ir::BasicBlock *block, ir::instr::Instr *instr,
-                              ir::instr::Instr *newInstr) {
-  std::vector<ir::instr::Instr *> users(instr->GetUsers().begin(),
-                                        instr->GetUsers().end());
-  for (auto user : users) {
-    user->ReplaceInput(instr, newInstr);
-  }
-  block->RemoveInstr(instr);
 }
 
 bool ConstantFolding::processBlock(ir::BasicBlock *block) {
@@ -77,7 +68,7 @@ bool ConstantFolding::processBlock(ir::BasicBlock *block) {
             }
             auto newInstr = block->AllocateInstrAfter<ir::instr::ConstantInstr>(
                 instr, typeId, result);
-            ChangeUsersInputs(block, instr, newInstr);
+            Pass::ReplaceInstr(block, instr, newInstr);
           }
         });
       }
@@ -95,7 +86,7 @@ bool ConstantFolding::processBlock(ir::BasicBlock *block) {
             auto val = processedConst->GetValue<T>();
             auto newInstr = block->AllocateInstrAfter<ir::instr::ConstantInstr>(
                 instr, typeId, val);
-            ChangeUsersInputs(block, instr, newInstr);
+            Pass::ReplaceInstr(block, instr, newInstr);
           }
         });
       }
@@ -116,12 +107,11 @@ bool ConstantFolding::processBlock(ir::BasicBlock *block) {
           using T = std::remove_pointer_t<decltype(ptr_type_tag)>;
           if constexpr (!std::is_void_v<T> &&
                         !std::is_same_v<T, std::nullptr_t>) {
-            // Take the value from the first constant input
             auto firstConst = instr->GetInputs()[0]->AsConstantInstr();
             auto val = firstConst->GetValue<T>();
             auto newInstr = block->AllocateInstrAfter<ir::instr::ConstantInstr>(
                 instr, typeId, val);
-            ChangeUsersInputs(block, instr, newInstr);
+            Pass::ReplaceInstr(block, instr, newInstr);
           }
         });
       }

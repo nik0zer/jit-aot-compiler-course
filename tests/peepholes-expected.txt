@@ -1,28 +1,44 @@
 method graph: TestOptimizerPasses_2
     basic block 0 -> bb1
         0.i32 param 0
+        1.u32 param 0
         
     bb0 -> basic block 1 -> bb2
-        1.i32 const 0
-        2.i32 const 32
-        3.i32 add v0 v1 
-        4.i64 cast v3 
-        5.i32 add v1 v0 
-        6.i64 cast v5 
+        2.i32 const 0
+        3.i32 const -1
+        4.u32 const 4294967295
+        5.i32 const 32
+        6.i32 add v0 v2 
+        7.i64 cast v6 
+        8.i32 add v2 v0 
+        9.i64 cast v8 
+        10.i32 sub v0 v1 
+        11.i32 add v10 v1 
+        12.i64 cast v11 
+        13.i32 add v1 v10 
+        14.i64 cast v13 
         
     bb0 -> basic block 2 -> bb3
-        7.i32 or v0 v1 
-        8.i64 cast v7 
-        9.i32 or v1 v0 
-        10.i64 cast v9 
-        11.i32 or v0 v0 
-        12.i64 cast v11 
+        15.i32 or v0 v2 
+        16.i64 cast v15 
+        17.i32 or v2 v0 
+        18.i64 cast v17 
+        19.i32 or v0 v0 
+        20.i64 cast v19 
+        21.i32 or v0 v3 
+        22.i64 cast v21 
+        23.i32 or v3 v0 
+        24.i64 cast v23 
+        25.u32 or v1 v4 
+        26.i64 cast v25 
+        27.u32 or v4 v1 
+        28.i64 cast v27 
         
     bb0 -> basic block 3 -> bb4
-        13.i32 ashr v0 v2 
-        14.i64 cast v13 
-        15.i32 ashr v0 v1 
-        16.i64 cast v15 
+        29.i32 ashr v0 v5 
+        30.i64 cast v29 
+        31.i32 ashr v0 v2 
+        32.i64 cast v31 
         
     bb3 -> basic block 4 -> 
         
@@ -30,22 +46,32 @@ method graph: TestOptimizerPasses_2
 method graph: TestOptimizerPasses_2
     basic block 0 -> bb1
         0.i32 param 0
+        1.u32 param 0
         
     bb0 -> basic block 1 -> bb2
-        1.i32 const 0
-        2.i32 const 32
-        4.i64 cast v0 
-        6.i64 cast v0 
+        2.i32 const 0
+        3.i32 const -1
+        4.u32 const 4294967295
+        5.i32 const 32
+        7.i64 cast v0 
+        9.i64 cast v0 
+        10.i32 sub v0 v1 
+        12.i64 cast v0 
+        14.i64 cast v0 
         
     bb0 -> basic block 2 -> bb3
-        8.i64 cast v0 
-        10.i64 cast v0 
-        12.i64 cast v0 
+        16.i64 cast v0 
+        18.i64 cast v0 
+        20.i64 cast v0 
+        22.i64 cast v3 
+        24.i64 cast v3 
+        26.i64 cast v4 
+        28.i64 cast v4 
         
     bb0 -> basic block 3 -> bb4
-        17.i32 const 0
-        14.i64 cast v17 
-        16.i64 cast v0 
+        33.i32 const 0
+        30.i64 cast v33 
+        32.i64 cast v0 
         
     bb3 -> basic block 4 -> 
         

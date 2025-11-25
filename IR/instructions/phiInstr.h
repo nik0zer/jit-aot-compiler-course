@@ -8,9 +8,21 @@ namespace ir::instr {
 class PhiInstr : public Instr {
 public:
   explicit PhiInstr(TypeId type, const std::vector<Instr *> &&inputs)
-      : Instr(InstrOpcode::PHI, type, std::move(inputs), {}) {}
+      : Instr(InstrOpcode::PHI, type, std::move(inputs), {}) {
+    for (auto input : inputs_) {
+      if (input != nullptr) {
+        input->AddUser(this);
+      }
+    }
+  }
   explicit PhiInstr(TypeId type, const std::vector<Instr *> &inputs)
-      : Instr(InstrOpcode::PHI, type, std::move(inputs), {}) {}
+      : Instr(InstrOpcode::PHI, type, std::move(inputs), {}) {
+    for (auto input : inputs_) {
+      if (input != nullptr) {
+        input->AddUser(this);
+      }
+    }
+  }
 
   void Dump(IrDumper &dumper) override;
 };

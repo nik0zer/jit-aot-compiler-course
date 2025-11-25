@@ -1,0 +1,58 @@
+method graph: TestOptimizerPasses_1
+    basic block 0 -> bb1
+        
+    bb0 -> basic block 1 -> bb3
+        0.u32 const 1
+        1.u32 const 2
+        2.u32 const 7
+        3.u64 cast v0 
+        4.u64 cast v1 
+        5.u64 cast v2 
+        6.u64 add v3 v5 
+        7.u64 add v5 v6 
+        8.u64 or v3 v5 
+        9.u64 add v8 v8 
+        10.u64 ashr v5 v3 
+        11.u64 ashr v9 v10 
+        
+    bb1 -> basic block 2 -> bb4
+        
+    bb2 -> basic block 3 -> bb4
+        
+    bb2, bb3 -> basic block 4 -> bb5
+        12.u64 phi v7 v7 
+        13.u64 phi v10 v10 
+        
+    bb4 -> basic block 5 -> 
+        14.u64 add v12 v13 
+        
+    
+method graph: TestOptimizerPasses_1
+    basic block 0 -> bb1
+        
+    bb0 -> basic block 1 -> bb3
+        0.u32 const 1
+        1.u32 const 2
+        2.u32 const 7
+        15.u64 const 1
+        16.u64 const 2
+        17.u64 const 7
+        18.u64 const 8
+        19.u64 const 15
+        20.u64 const 7
+        21.u64 const 14
+        22.u64 const 3
+        23.u64 const 1
+        
+    bb1 -> basic block 2 -> bb4
+        
+    bb2 -> basic block 3 -> bb4
+        
+    bb2, bb3 -> basic block 4 -> bb5
+        24.u64 const 15
+        25.u64 const 3
+        
+    bb4 -> basic block 5 -> 
+        26.u64 const 18
+        
+    

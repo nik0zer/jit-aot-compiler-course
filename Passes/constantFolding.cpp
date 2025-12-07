@@ -8,6 +8,7 @@
 #include "instructions/instr.h"
 #include "irDumper.h"
 #include "pass.h"
+#include <cstring>
 #include <set>
 #include <vector>
 
@@ -60,7 +61,22 @@ bool ConstantFolding::processBlock(ir::BasicBlock *block) {
             case ir::instr::BinaryOperationType::ASHR:
               if constexpr (!std::is_floating_point_v<T>) {
                 // ASHR is not defined for floating point types
-                result = leftVal >> rightVal;
+                // For signed types ASHR is the same as right shift
+                if (rightVal < 0 ||
+                    rightVal >= std::numeric_limits<T>::digits) {
+                  result = static_cast<T>(0);
+                  break;
+                }
+                if constexpr (std::is_signed_v<T>) {
+                  result = leftVal >> rightVal;
+                  break;
+                }
+                // For unsigned types ASHR is the same as right shift for signed
+                // bitcast
+                std::make_signed_t<T> signedVal;
+                std::memcpy(&signedVal, &leftVal, sizeof(T));
+                signedVal >>= rightVal;
+                std::memcpy(&result, &signedVal, sizeof(T));
               }
               break;
             default:

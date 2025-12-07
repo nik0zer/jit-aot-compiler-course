@@ -29,6 +29,12 @@ int main() {
       ir::instr::TypeId::U32, 2);
   auto constU32_7 = bbCast->AllocateInstr<ir::instr::ConstantInstr>(
       ir::instr::TypeId::U32, 7);
+  auto constU32_40 = bbCast->AllocateInstr<ir::instr::ConstantInstr>(
+      ir::instr::TypeId::U32, 40);
+  auto constU8_129 = bbCast->AllocateInstr<ir::instr::ConstantInstr>(
+      ir::instr::TypeId::U8, 129);
+  auto constU8_1 =
+      bbCast->AllocateInstr<ir::instr::ConstantInstr>(ir::instr::TypeId::U8, 1);
   auto castInstr_1 = bbCast->AllocateInstr<ir::instr::CastInstr>(
       ir::instr::TypeId::U64, constU32_1);
   auto castInstr_2 = bbCast->AllocateInstr<ir::instr::CastInstr>(
@@ -52,6 +58,12 @@ int main() {
   auto ashr_2 = bbCast->AllocateInstr<ir::instr::BinaryOperationInstr>(
       ir::instr::TypeId::U64, ir::instr::BinaryOperationType::ASHR, add_3,
       ashr_1);
+  auto ashr_3 = bbCast->AllocateInstr<ir::instr::BinaryOperationInstr>(
+      ir::instr::TypeId::U64, ir::instr::BinaryOperationType::ASHR, add_3,
+      constU32_40);
+  auto ashr_4 = bbCast->AllocateInstr<ir::instr::BinaryOperationInstr>(
+      ir::instr::TypeId::U8, ir::instr::BinaryOperationType::ASHR, constU8_129,
+      constU8_1);
 
   auto bbPhi1 = graph.AllocateBlock();
   bbPhi1->SetPreds({bbCast});

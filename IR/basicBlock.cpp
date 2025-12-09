@@ -3,6 +3,9 @@
 namespace ir {
 void BasicBlock::DumpPredecessors(IrDumper &dumper) {
   for (auto block : preds_) {
+    if (block == nullptr) {
+      continue;
+    }
     dumper.Add("bb");
     dumper.Add(block->GetId());
     if (block != preds_.back()) {

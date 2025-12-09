@@ -4,11 +4,17 @@
 #include "graph.h"
 #include "instructions/instr.h"
 #include "irDumper.h"
+#include "loopAnalyzer.h"
 #include "util.h"
 #include <array>
 #include <cstddef>
 #include <iostream>
 #include <vector>
+
+namespace analyzer {
+class Loop;
+}
+
 namespace ir {
 constexpr std::size_t MAX_NUM_OF_SUCCESSORS = 2;
 
@@ -179,6 +185,9 @@ public:
     dominatedBlocks_ = dominatedBlocks;
   }
 
+  void SetLoop(analyzer::Loop *loop) { loop_ = loop; }
+  analyzer::Loop *GetLoop() { return loop_; }
+
   friend class MethodGraph;
   friend class analyzer::DominatorAnalyzer;
 
@@ -198,6 +207,8 @@ private:
   std::vector<analyzer::BlockWithIndex> dominators_{};
   std::vector<analyzer::BlockWithIndex> dominatedBlocks_{};
   BasicBlock *iDominator_{nullptr};
+
+  analyzer::Loop *loop_{nullptr};
 };
 
 } // namespace ir

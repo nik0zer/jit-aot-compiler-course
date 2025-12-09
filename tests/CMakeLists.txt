@@ -17,6 +17,7 @@ set(TESTS_DATA
     #"test_name test_file test_mode"
     "ir_build_factorial ir_build_factorial.cpp ${EXPECTED_MODE}"
     "find_dominators find_dominators.cpp ${EXPECTED_MODE}"
+    "find_loops find_loops.cpp ${EXPECTED_MODE}"
     "constant_folding constant_folding.cpp ${EXPECTED_MODE}"
     "peepholes peepholes.cpp ${EXPECTED_MODE}"
 )

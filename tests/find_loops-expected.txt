@@ -1,0 +1,210 @@
+method graph: Example 0.1
+    basic block 0 -> bb1
+        
+    bb0, bb4 -> basic block 1 -> bb2, bb3
+        
+    bb1 -> basic block 2 -> 
+        
+    bb1 -> basic block 3 -> bb4
+        
+    bb3 -> basic block 4 -> bb1
+        
+    
+0. bb 0
+1. bb 1
+2. bb 3
+3. bb 4
+4. bb 2
+
+
+Loop analysis for: Example 0.1
+    Reducible loops:
+        Loop: header bb 1, blocks: bb 3, bb 4
+        
+    Irreducible loops:
+        None
+        
+method graph: Example 0.2
+    basic block 0 -> bb1
+        
+    bb0, bb4 -> basic block 1 -> bb2
+        
+    bb1 -> basic block 2 -> bb3, bb5
+        
+    bb2 -> basic block 3 -> bb4
+        
+    bb3 -> basic block 4 -> bb1
+        
+    bb2, bb3 -> basic block 5 -> 
+        
+    
+0. bb 0
+1. bb 1
+2. bb 2
+3. bb 5
+4. bb 3
+5. bb 4
+
+
+Loop analysis for: Example 0.2
+    Reducible loops:
+        Loop: header bb 1, blocks: bb 2, bb 3, bb 4
+        
+    Irreducible loops:
+        None
+        
+method graph: Example 0.3
+    bb6 -> basic block 0 -> bb1
+        
+    bb0, bb5 -> basic block 1 -> bb2, bb3
+        
+    bb1 -> basic block 2 -> bb4, bb7
+        
+    bb1 -> basic block 3 -> bb4
+        
+    bb2, bb3 -> basic block 4 -> bb5
+        
+    bb4 -> basic block 5 -> bb6, bb1
+        
+    bb5 -> basic block 6 -> bb0
+        
+    bb2 -> basic block 7 -> 
+        
+    
+0. bb 0
+1. bb 1
+2. bb 3
+3. bb 2
+4. bb 7
+5. bb 4
+6. bb 5
+7. bb 6
+
+
+Loop analysis for: Example 0.3
+    Reducible loops:
+        Loop: header bb 1, blocks: bb 3, bb 2, bb 4, bb 5
+        Loop: header bb 0, blocks: bb 6
+            Loop: header bb 1, blocks: bb 3, bb 2, bb 4, bb 5
+            
+    Irreducible loops:
+        None
+        
+method graph: Example 1
+    basic block 0 -> bb1
+        
+    bb0 -> basic block 1 -> bb2, bb5
+        
+    bb1 -> basic block 2 -> bb3
+        
+    bb2, bb4, bb6 -> basic block 3 -> 
+        
+    bb5 -> basic block 4 -> bb3
+        
+    bb1 -> basic block 5 -> bb4, bb6
+        
+    bb5 -> basic block 6 -> bb3
+        
+    
+0. bb 0
+1. bb 1
+2. bb 5
+3. bb 6
+4. bb 4
+5. bb 2
+6. bb 3
+
+
+Loop analysis for: Example 1
+    Reducible loops:
+        None
+        
+    Irreducible loops:
+        None
+        
+method graph: Example 2
+    basic block 0 -> bb1
+        
+    bb0, bb7 -> basic block 1 -> bb2, bb9
+        
+    bb1, bb9 -> basic block 2 -> bb3
+        
+    bb2 -> basic block 3 -> bb4, bb2
+        
+    bb3, bb5 -> basic block 4 -> bb5
+        
+    bb4 -> basic block 5 -> bb6, bb4
+        
+    bb5 -> basic block 6 -> bb7, bb8
+        
+    bb6 -> basic block 7 -> bb1
+        
+    bb6 -> basic block 8 -> bb10
+        
+    bb1 -> basic block 9 -> bb2
+        
+    bb8 -> basic block 10 -> 
+        
+    
+0. bb 0
+1. bb 1
+2. bb 9
+3. bb 2
+4. bb 3
+5. bb 4
+6. bb 5
+7. bb 6
+8. bb 8
+9. bb 10
+10. bb 7
+
+
+Loop analysis for: Example 2
+    Reducible loops:
+        Loop: header bb 4, blocks: bb 5
+        Loop: header bb 2, blocks: bb 3
+        Loop: header bb 1, blocks: bb 9, bb 6, bb 7
+            Loop: header bb 4, blocks: bb 5
+            Loop: header bb 2, blocks: bb 3
+            
+    Irreducible loops:
+        None
+        
+method graph: Example 3
+    basic block 0 -> bb1
+        
+    bb0, bb5 -> basic block 1 -> bb2, bb4
+        
+    bb1, bb6 -> basic block 2 -> bb3
+        
+    bb2, bb4 -> basic block 3 -> bb6
+        
+    bb1 -> basic block 4 -> bb5, bb3
+        
+    bb4 -> basic block 5 -> bb7, bb1
+        
+    bb3, bb7 -> basic block 6 -> bb8, bb2
+        
+    bb5 -> basic block 7 -> bb6, bb8
+        
+    bb6, bb7 -> basic block 8 -> 
+        
+    
+0. bb 0
+1. bb 1
+2. bb 4
+3. bb 5
+4. bb 7
+5. bb 2
+6. bb 3
+7. bb 6
+8. bb 8
+
+
+Loop analysis for: Example 3
+    Reducible loops:
+        Loop: header bb 1, blocks: bb 4, bb 5
+        
+    Irreducible loops:
+        Loop: blocks: bb 2, bb 6
+        

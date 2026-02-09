@@ -1,0 +1,1 @@
+/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./unknownFile.fa:0: File not found

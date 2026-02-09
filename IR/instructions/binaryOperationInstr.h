@@ -14,8 +14,14 @@ public:
       : Instr(InstrOpcode::BINARY_OPERATION, type), op_(op) {
     AddInput(lhs);
     AddInput(rhs);
-    lhs->AddUser(this);
-    rhs->AddUser(this);
+    if (lhs != nullptr)
+    {
+      lhs->AddUser(this);
+    }
+    if (rhs != nullptr)
+    {
+      rhs->AddUser(this);
+    }
   }
 
   void SetOperation(BinaryOperationType op) { op_ = op; }

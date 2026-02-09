@@ -1,0 +1,8 @@
+method graph: source_ir_builder_2.fa
+    basic block 0 -> bb1, bb2
+        
+    bb0 -> basic block 1 -> bb2
+        
+    bb0, bb1 -> basic block 2 -> 
+        
+    

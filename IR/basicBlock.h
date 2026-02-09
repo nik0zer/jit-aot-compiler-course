@@ -26,13 +26,18 @@ public:
   template <typename InstrType, typename... Args>
   instr::Instr *AllocateInstr(Args &&...args) {
     auto instr = new InstrType(std::forward<Args>(args)...);
+    AppendInstr(instr);
+    return instr;
+  }
+
+  void AppendInstr(instr::Instr *instr) {
     instr->SetInstrId(parent_->GetNextInstrId());
     if (instr->GetOpcode() == instr::InstrOpcode::PHI) {
       if (first_ == nullptr) {
         first_ = instr;
         last_ = instr;
         lastPhi_ = instr;
-        return instr;
+        return;
       }
       if (lastPhi_ == nullptr) {
         first_->SetPrevInstr(instr);
@@ -40,7 +45,7 @@ public:
         firstNonPhi_ = first_;
         first_ = instr;
         lastPhi_ = instr;
-        return instr;
+        return;
       }
       lastPhi_->SetNextInstr(instr);
       instr->SetPrevInstr(lastPhi_);
@@ -48,21 +53,20 @@ public:
       if (firstNonPhi_ != nullptr) {
         instr->SetNextInstr(firstNonPhi_);
         firstNonPhi_->SetPrevInstr(instr);
-        return instr;
+        return;
       }
       last_ = instr;
-      return instr;
+      return;
     }
     if (first_ == nullptr) {
       first_ = instr;
       firstNonPhi_ = instr;
       last_ = instr;
-      return instr;
+      return;
     }
     last_->SetNextInstr(instr);
     instr->SetPrevInstr(last_);
     last_ = instr;
-    return instr;
   }
 
   template <typename InstrType, typename... Args>
@@ -131,12 +135,14 @@ public:
   void SetPreds(std::vector<BasicBlock *> &&preds) {
     preds_ = std::move(preds);
   }
+  void SetPred(BasicBlock *pred, size_t index) { preds_[index] = pred; }
   void SetSuccs(const std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &succs) {
     succs_ = succs;
   }
   void SetSuccs(std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &&succs) {
     succs_ = std::move(succs);
   }
+  void SetSucc(BasicBlock *succ, size_t index) { succs_[index] = succ; }
 
   const std::vector<BasicBlock *> &GetPreds() const { return preds_; }
   const std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &GetSuccs() const {

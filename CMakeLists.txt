@@ -11,6 +11,7 @@ set(ANALYZERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Analyzers)
 set(INSTR_DIR ${IR_DIR}/instructions)
 set(UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils)
 set(PASSES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Passes)
+set(IR_BUILDER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/IRBuilder)
 
 set(IR_SOURCES
 ${INSTR_DIR}/binaryOperationInstr.cpp
@@ -38,6 +39,10 @@ ${PASSES_DIR}/pass.cpp
 ${PASSES_DIR}/peepholes.cpp
 )
 
+set(IR_BUILDER_SOURCES
+${IR_BUILDER_DIR}/sourceIrBuilder.cpp
+)
+
 set(IR_LIB_DIRS
 ${IR_DIR}
 ${UTIL_DIR}
@@ -49,6 +54,10 @@ ${ANALYZERS_DIR}
 
 set(PASSES_LIB_DIRS
 ${PASSES_DIR}
+)
+
+set(IR_BUILDER_LIB_DIRS
+${IR_BUILDER_DIR}
 )
 
 add_subdirectory(tests)

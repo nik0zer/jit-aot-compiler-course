@@ -22,6 +22,9 @@ public:
   explicit MethodGraph(const std::string &&name, MethodId id)
       : name_(name), id_(id) {}
 
+  explicit MethodGraph(MethodGraph &&other) = delete;
+  explicit MethodGraph(MethodGraph &other) = delete;
+
   void AddBlock(BasicBlock *block);
   bool RemoveBlock(BasicBlock *block);
   BasicBlock *AllocateBlock();

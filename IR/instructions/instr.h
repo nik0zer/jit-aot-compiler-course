@@ -32,8 +32,8 @@ protected:
         type_(type) {}
   explicit Instr(InstrOpcode op, TypeId type, std::vector<Instr *> &&inputs,
                  std::set<Instr *> &&users)
-      : op_(op), prev_(nullptr), next_(nullptr), inputs_(std::move(inputs)),
-        users_(std::move(users)), type_(type) {}
+      : op_(op), prev_(nullptr), next_(nullptr), inputs_(inputs),
+        users_(users), type_(type) {}
 
   explicit Instr(InstrOpcode op, TypeId type,
                  const std::vector<Instr *> &inputs,

@@ -30,6 +30,7 @@ ${IR_DIR}/basicBlock.cpp
 set(ANALYZERS_SOURCES
 ${ANALYZERS_DIR}/dominatorAnalyzer.cpp
 ${ANALYZERS_DIR}/loopAnalyzer.cpp
+${ANALYZERS_DIR}/linearOrderAnalyzer.cpp
 ${ANALYZERS_DIR}/util.cpp
 )
 

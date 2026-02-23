@@ -15,14 +15,13 @@
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
+#include <array>
 #include <ios>
 #include <iostream>
 #include <optional>
 #include <ostream>
-#include <sstream>
 #include <string>
 #include <string_view>
-#include <typeindex>
 #include <unordered_map>
 #include <regex>
 #include <vector>
@@ -56,8 +55,6 @@ struct UnderProcessedConnections {
     UnderProcessedSuccesor unresolvedSuccs;
     UnderProcessedInput unresolvedInputs;
 };
-
-
 
 ir::BasicBlock *CheckIfBasicBlock(std::string_view line, ir::MethodGraph &graph, std::unordered_map<size_t, ir::BasicBlock *> &blocksMap,
                                   UnderProcessedConnections &underProcessedConnections, size_t lineNum,
@@ -168,52 +165,63 @@ ir::instr::IfType StringToIfType(const std::string& type) {
     if (type == "ge") return ir::instr::IfType::GE;
     return ir::instr::IfType::EQ; // Should not happen
 }
-}
 
-ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
-                                       UnderProcessedConnections &underProcessedConnections, size_t lineNum,
-                                       std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine)
-{
-    std::string str(line);
-    // trim
-    str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
-    str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
+using InstrParserFunc = ir::instr::Instr* (*)(
+    const std::string&,
+    std::unordered_map<size_t, ir::instr::Instr *> &,
+    UnderProcessedConnections &,
+    size_t,
+    std::filesystem::path &,
+    DiagnosticsEngine &
+);
 
-    auto addInstr = [&](ir::instr::Instr* instr, size_t id) {
-        if (instrMap.count(id)) {
-            diagnosticEngine.ThrowError("Instruction with id " + std::to_string(id) + " already exists", lineNum, file);
-            return (ir::instr::Instr*)nullptr;
-        }
-        instr->SetInstrId(id);
-        instrMap[id] = instr;
-        return instr;
-    };
+ir::instr::Instr *AddParsedInstr(ir::instr::Instr* instr, size_t id, std::unordered_map<size_t, ir::instr::Instr *> &instrMap, size_t lineNum,
+                        std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine) {
+    if (instrMap.count(id)) {
+        diagnosticEngine.ThrowError("Instruction with id " + std::to_string(id) + " already exists", lineNum, file);
+        return (ir::instr::Instr*)nullptr;
+    }
+    instr->SetInstrId(id);
+    instrMap[id] = instr;
+    return instr;
+};
 
+ir::instr::Instr* ParseParamInstr(const std::string& line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                                    UnderProcessedConnections &underProcessedConnections, size_t lineNum,
+                                    std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine) {
     std::smatch match;
-
-    // Param
     std::regex paramRegex(R"((\d+)\.(u\d+|void)\s+param (\d+))");
-    if (std::regex_match(str, match, paramRegex)) {
+    if (std::regex_match(line, match, paramRegex)) {
         size_t instrId = std::stoul(match[1]);
         ir::instr::TypeId type = StringToTypeId(match[2]);
         size_t paramNum = std::stoul(match[3]);
         auto newInstr = new ir::instr::ParamInstr(type, paramNum);
-        return addInstr(newInstr, instrId);
+        return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file, diagnosticEngine);
     }
+    return nullptr;
+}
 
-    // Constant
+ir::instr::Instr* ParseConstantInstr(const std::string& line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                                       UnderProcessedConnections &underProcessedConnections, size_t lineNum,
+                                       std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine) {
+    std::smatch match;
     std::regex constRegex(R"((\d+)\.(u\d+|void)\s+const (\d+))");
-    if (std::regex_match(str, match, constRegex)) {
+    if (std::regex_match(line, match, constRegex)) {
         size_t instrId = std::stoul(match[1]);
         ir::instr::TypeId type = StringToTypeId(match[2]);
         uint64_t val = std::stoull(match[3]);
         auto newInstr = new ir::instr::ConstantInstr(type, val);
-        return addInstr(newInstr, instrId);
+        return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file, diagnosticEngine);
     }
+    return nullptr;
+}
 
-    // Cast
+ir::instr::Instr* ParseCastInstr(const std::string& line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                                   UnderProcessedConnections &underProcessedConnections, size_t lineNum,
+                                   std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine) {
+    std::smatch match;
     std::regex castRegex(R"((\d+)\.(u\d+|void)\s+cast v(\d+))");
-    if (std::regex_match(str, match, castRegex)) {
+    if (std::regex_match(line, match, castRegex)) {
         size_t instrId = std::stoul(match[1]);
         ir::instr::TypeId type = StringToTypeId(match[2]);
         size_t inputId = std::stoul(match[3]);
@@ -227,12 +235,17 @@ ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<s
         if (input == nullptr) {
             underProcessedConnections.unresolvedInputs.push_back({newInstr, 0, inputId, {file, lineNum}});
         }
-        return addInstr(newInstr, instrId);
+        return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file, diagnosticEngine);
     }
+    return nullptr;
+}
 
-    // Binary Operation
+ir::instr::Instr* ParseBinaryOperationInstr(const std::string& line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                                             UnderProcessedConnections &underProcessedConnections, size_t lineNum,
+                                             std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine) {
+    std::smatch match;
     std::regex binOpRegex(R"((\d+)\.(u\d+|void)\s+(add|sub|mul|div|and|or) v(\d+) v(\d+))");
-    if (std::regex_match(str, match, binOpRegex)) {
+    if (std::regex_match(line, match, binOpRegex)) {
         size_t instrId = std::stoul(match[1]);
         ir::instr::TypeId type = StringToTypeId(match[2]);
         ir::instr::BinaryOperationType op = StringToBinaryOpType(match[3]);
@@ -260,12 +273,17 @@ ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<s
             underProcessedConnections.unresolvedInputs.push_back({newInstr, 1, input2Id, {file, lineNum}});
         }
 
-        return addInstr(newInstr, instrId);
+        return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file, diagnosticEngine);
     }
+    return nullptr;
+}
 
-    // Return
+ir::instr::Instr* ParseReturnInstr(const std::string& line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                                     UnderProcessedConnections &underProcessedConnections, size_t lineNum,
+                                     std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine) {
+    std::smatch match;
     std::regex retRegex(R"((\d+)\.(u\d+|void)\s+return(?: v(\d+))?)");
-    if (std::regex_match(str, match, retRegex)) {
+    if (std::regex_match(line, match, retRegex)) {
         size_t instrId = std::stoul(match[1]);
         ir::instr::TypeId type = StringToTypeId(match[2]);
         ir::instr::Instr* input = nullptr;
@@ -280,12 +298,17 @@ ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<s
         if (input == nullptr && match[3].matched) {
             underProcessedConnections.unresolvedInputs.push_back({newInstr, 0, std::stoul(match[3]), {file, lineNum}});
         }
-        return addInstr(newInstr, instrId);
+        return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file, diagnosticEngine);
     }
+    return nullptr;
+}
 
-    // Call
+ir::instr::Instr* ParseCallInstr(const std::string& line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                                   UnderProcessedConnections &underProcessedConnections, size_t lineNum,
+                                   std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine) {
+    std::smatch match;
     std::regex callRegex(R"((\d+)\.(u\d+|void)\s+call v(\d+)((?: v\d+)*))");
-    if (std::regex_match(str, match, callRegex)) {
+    if (std::regex_match(line, match, callRegex)) {
         size_t instrId = std::stoul(match[1]);
         ir::instr::TypeId type = StringToTypeId(match[2]);
         size_t methodId = std::stoul(match[3]);
@@ -309,19 +332,22 @@ ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<s
 
         auto newInstr = new ir::instr::CallInstr(type, methodId, std::move(args));
 
-        // a bit of a hack to resolve inputs later
         for (auto& unresolved : underProcessedConnections.unresolvedInputs) {
             if (unresolved.objectWithUnresolvedConnection == nullptr) {
                 unresolved.objectWithUnresolvedConnection = newInstr;
             }
         }
-
-        return addInstr(newInstr, instrId);
+        return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file, diagnosticEngine);
     }
+    return nullptr;
+}
 
-    // Phi
+ir::instr::Instr* ParsePhiInstr(const std::string& line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                                  UnderProcessedConnections &underProcessedConnections, size_t lineNum,
+                                  std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine) {
+    std::smatch match;
     std::regex phiRegex(R"((\d+)\.(u\d+|void)\s+phi((?: v\d+)*))");
-    if (std::regex_match(str, match, phiRegex)) {
+    if (std::regex_match(line, match, phiRegex)) {
         size_t instrId = std::stoul(match[1]);
         ir::instr::TypeId type = StringToTypeId(match[2]);
         std::vector<ir::instr::Instr*> inputs;
@@ -347,12 +373,17 @@ ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<s
                 unresolved.objectWithUnresolvedConnection = newInstr;
             }
         }
-        return addInstr(newInstr, instrId);
+        return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file, diagnosticEngine);
     }
+    return nullptr;
+}
 
-    // If (no result)
+ir::instr::Instr* ParseIfInstr(const std::string& line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                                 UnderProcessedConnections &underProcessedConnections, size_t lineNum,
+                                 std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine) {
+    std::smatch match;
     std::regex ifRegex(R"((\d+)\.(u\d+|void)\s+if\.(gt|lt|ge|le|eq|ne) v(\d+) v(\d+))");
-    if (std::regex_match(str, match, ifRegex)) {
+    if (std::regex_match(line, match, ifRegex)) {
         size_t instrId = std::stoul(match[1]);
         ir::instr::TypeId type = StringToTypeId(match[2]);
         ir::instr::IfType ifType = StringToIfType(match[3]);
@@ -380,10 +411,37 @@ ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<s
         if (input2 == nullptr) {
             underProcessedConnections.unresolvedInputs.push_back({newInstr, 1, input2Id, {file, lineNum}});
         }
-
-        return addInstr(newInstr, instrId);
+        return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file, diagnosticEngine);
     }
+    return nullptr;
+}
 
+constexpr std::array<InstrParserFunc, 8> InstrParsers = {
+    ParseParamInstr,
+    ParseConstantInstr,
+    ParseCastInstr,
+    ParseBinaryOperationInstr,
+    ParseReturnInstr,
+    ParseCallInstr,
+    ParsePhiInstr,
+    ParseIfInstr
+};
+
+}
+
+ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                                       UnderProcessedConnections &underProcessedConnections, size_t lineNum,
+                                       std::filesystem::path &file, DiagnosticsEngine &diagnosticEngine)
+{
+    std::string str(line);
+    str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
+    str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
+
+    for (const auto& parser : InstrParsers) {
+        if (ir::instr::Instr* instr = parser(str, instrMap, underProcessedConnections, lineNum, file, diagnosticEngine)) {
+            return instr;
+        }
+    }
 
     return nullptr;
 }
@@ -477,7 +535,6 @@ ir::MethodGraph *SourceIrBuilder::Build(std::ostream &diagnosticOutput) {
         diagnosticEngine.ThrowError("Syntax error", currentLine, sourcePath_);
     }
 
-    // Fill UnderProcessedConnections
     auto checkIfUnresolved = [&](auto &it, auto &map, auto &connection) {
         if (it == map.end()) {
             diagnosticEngine.ThrowError("Unresolved object", connection.position.line, connection.position.file);

@@ -10,6 +10,7 @@
 namespace analyzer {
 class DominatorAnalyzer;
 class DominatorTree;
+class LinearOrderAnalyzer;
 } // namespace analyzer
 
 namespace ir {
@@ -31,6 +32,13 @@ public:
 
   const std::vector<BasicBlock *> &GetBlocks() const { return blocks_; }
   void SetBlocks(const std::vector<BasicBlock *> &&blocks) { blocks_ = blocks; }
+
+  const std::vector<BasicBlock *> &GetLinearOrderedBlocks() const {
+    return linearOrderedBlocks_;
+  }
+  void SetLinearOrderedBlocks(const std::vector<BasicBlock *> &&blocks) {
+    linearOrderedBlocks_ = blocks;
+  }
 
   const std::string &GetName() const { return name_; }
 
@@ -55,9 +63,11 @@ public:
 
   friend class analyzer::DominatorAnalyzer;
   friend class analyzer::DominatorTree;
+  friend class analyzer::LinearOrderAnalyzer;
 
 private:
   std::vector<BasicBlock *> blocks_;
+  std::vector<BasicBlock *> linearOrderedBlocks_;
   std::string name_;
   MethodId id_;
   instr::InstrId freeId_{0};

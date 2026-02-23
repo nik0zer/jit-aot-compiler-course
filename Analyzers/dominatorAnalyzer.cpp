@@ -45,7 +45,7 @@ EnumerateBlocks(const std::vector<ir::BasicBlock *> &blocks) {
   for (auto block : blocks) {
     result.emplace_back(block, index++);
   }
-  return std::move(result);
+  return result;
 }
 
 std::vector<BlockWithIndex>
@@ -53,7 +53,7 @@ DominatorAnalyzer::RPO(ir::BasicBlock *startBlock,
                        ir::BasicBlock *ignoredBlock) {
   std::vector<ir::BasicBlock *> result = DFSPO(startBlock, ignoredBlock);
   std::reverse(result.begin(), result.end());
-  return std::move(EnumerateBlocks(result));
+  return EnumerateBlocks(result);
 }
 
 void DominatorAnalyzer::DumpRPO(ir::IrDumper &dumper,
@@ -73,7 +73,7 @@ CreateSetFromIndexedBlocks(const std::vector<BlockWithIndex> &indexedBlocks) {
   for (auto block : indexedBlocks) {
     result.insert(block.first);
   }
-  return std::move(result);
+  return result;
 }
 
 void DominatorAnalyzer::FindDominators(ir::BasicBlock *startBlock) {

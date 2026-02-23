@@ -133,14 +133,14 @@ public:
 
   void SetPreds(const std::vector<BasicBlock *> &preds) { preds_ = preds; }
   void SetPreds(std::vector<BasicBlock *> &&preds) {
-    preds_ = std::move(preds);
+    preds_ = preds;
   }
   void SetPred(BasicBlock *pred, size_t index) { preds_[index] = pred; }
   void SetSuccs(const std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &succs) {
     succs_ = succs;
   }
   void SetSuccs(std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &&succs) {
-    succs_ = std::move(succs);
+    succs_ = succs;
   }
   void SetSucc(BasicBlock *succ, size_t index) { succs_[index] = succ; }
 

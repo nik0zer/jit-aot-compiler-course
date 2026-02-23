@@ -1,12 +1,13 @@
 /home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:1: Instruction outside of a basic block
 /home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:3: Syntax error
 /home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:5: Syntax error
-/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:8: Instruction with id 4 already exists
-/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:8: Syntax error
-/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:11: Syntax error
-/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:14: Syntax error
-/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:17: Basic block with id 5 already exists
-/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:17: Syntax error
+/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:9: Instruction with id 4 already exists
+/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:9: Syntax error
+/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:10: If instructions must go last
+/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:13: Syntax error
+/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:16: Syntax error
+/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:19: Basic block with id 5 already exists
+/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:19: Syntax error
 /home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:6: Unresolved object
 /home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:7: Unresolved object
-/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:8: Unresolved object
+/home/nikozer/university_tasks/jit-aot-compiler-course/tests/./source_ir_builder_4.fa:9: Unresolved object

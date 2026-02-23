@@ -5,7 +5,9 @@ bb 0 -> bb 1, bb 2
 2.u32 adssd v0 v1
 3.u32 add v0 v1
 4.u32 add v0 v1
+15.void if.le v1 v1
 4.u32 add v0 v1
+16.u32 add v1 v1
 
 bb 0 -> bb 1 -> bb 2
 6.u32 subb v2 v1

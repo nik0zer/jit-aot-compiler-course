@@ -12,6 +12,7 @@
 #include "instructions/returnInstr.h"
 #include <climits>
 #include <cstddef>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <ios>
@@ -21,6 +22,7 @@
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <typeindex>
 #include <unordered_map>
 #include <regex>
 #include <vector>
@@ -37,17 +39,12 @@ std::optional<std::ifstream> ReadSource(const std::filesystem::path& source) {
     return std::nullopt;
 }
 
-struct Position {
-    std::filesystem::path &file;
-    size_t line;
-};
-
 template <typename T>
 struct UnderProcessedConnection {
     T* objectWithUnresolvedConnection;
     size_t numOfInput;
     size_t inputObjectId;
-    Position position;
+    DiagnosticsEngine::Position position;
 };
 
 using UnderProcessedPredessor = std::vector<UnderProcessedConnection<ir::BasicBlock>>;
@@ -354,11 +351,13 @@ ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<s
     }
 
     // If (no result)
-    std::regex ifRegex(R"(if\.(gt|lt|ge|le|eq|ne) v(\d+) v(\d+))");
+    std::regex ifRegex(R"((\d+)\.(u\d+|void)\s+if\.(gt|lt|ge|le|eq|ne) v(\d+) v(\d+))");
     if (std::regex_match(str, match, ifRegex)) {
-        ir::instr::IfType type = StringToIfType(match[1]);
-        size_t input1Id = std::stoul(match[2]);
-        size_t input2Id = std::stoul(match[3]);
+        size_t instrId = std::stoul(match[1]);
+        ir::instr::TypeId type = StringToTypeId(match[2]);
+        ir::instr::IfType ifType = StringToIfType(match[3]);
+        size_t input1Id = std::stoul(match[4]);
+        size_t input2Id = std::stoul(match[5]);
 
         ir::instr::Instr* input1 = nullptr;
         auto input1It = instrMap.find(input1Id);
@@ -372,7 +371,7 @@ ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<s
             input2 = input2It->second;
         }
 
-        auto newInstr = new ir::instr::IfInstr(input1, input2, type);
+        auto newInstr = new ir::instr::IfInstr(input1, input2, ifType);
 
         if (input1 == nullptr) {
             underProcessedConnections.unresolvedInputs.push_back({newInstr, 0, input1Id, {file, lineNum}});
@@ -382,11 +381,57 @@ ir::instr::Instr *CheckIfInstruction(std::string_view line, std::unordered_map<s
             underProcessedConnections.unresolvedInputs.push_back({newInstr, 1, input2Id, {file, lineNum}});
         }
 
-        return newInstr;
+        return addInstr(newInstr, instrId);
     }
 
 
     return nullptr;
+}
+
+enum class ProcessedInstrTypes : uint64_t {
+    None = 0U,
+    NonPhi = 1U << 0U,
+    If = 1U << 1U,
+};
+
+class BasicBlockParseState {
+public:
+    BasicBlockParseState() = default;
+    void AddFlag(ProcessedInstrTypes type)
+    {
+        processedInstrTypes_ = static_cast<ProcessedInstrTypes>(static_cast<uint64_t>(processedInstrTypes_) |
+                                static_cast<uint64_t>(type));
+    }
+    bool HasFlag(ProcessedInstrTypes type) const
+    {
+        return (static_cast<uint64_t>(processedInstrTypes_) & static_cast<uint64_t>(type)) != 0U;
+    }
+
+private:
+    ProcessedInstrTypes processedInstrTypes_ {};
+};
+
+static bool CheckInstrOrderErrors(ir::BasicBlock *currentBlock, BasicBlockParseState &bbParseState, ir::instr::Instr *instr, DiagnosticsEngine::Position &&position, DiagnosticsEngine &diagnosticEngine)
+{
+    if (currentBlock == nullptr) {
+        diagnosticEngine.ThrowError("Instruction outside of a basic block", position);
+        return false;
+    }
+    if (bbParseState.HasFlag(ProcessedInstrTypes::NonPhi) && instr->GetOpcode() == ir::instr::InstrOpcode::PHI) {
+        diagnosticEngine.ThrowError("Phi instructions must go first", position);
+        return true;
+    }
+    if(instr->GetOpcode() != ir::instr::InstrOpcode::PHI) {
+        bbParseState.AddFlag(ProcessedInstrTypes::NonPhi);
+    }
+    if(bbParseState.HasFlag(ProcessedInstrTypes::If)) {
+        diagnosticEngine.ThrowError("If instructions must go last", position);
+        return true;
+    }
+    if(instr->GetOpcode() == ir::instr::InstrOpcode::IF) {
+        bbParseState.AddFlag(ProcessedInstrTypes::If);
+    }
+    return true;
 }
 
 ir::MethodGraph *SourceIrBuilder::Build(std::ostream &diagnosticOutput) {
@@ -409,7 +454,7 @@ ir::MethodGraph *SourceIrBuilder::Build(std::ostream &diagnosticOutput) {
 
     std::string line;
     ir::BasicBlock *currentBlock = nullptr;
-    bool firstNonPhiProcessed = false;
+    BasicBlockParseState bbParseState {};
     size_t currentLine = 0;
     while (std::getline(*source, line)) {
         currentLine++;
@@ -418,19 +463,13 @@ ir::MethodGraph *SourceIrBuilder::Build(std::ostream &diagnosticOutput) {
         }
         if (auto block = CheckIfBasicBlock(line, *graph, blocksMap, underProcessedConnections, currentLine, sourcePath_, diagnosticEngine); block != nullptr) {
             currentBlock = block;
+            bbParseState = BasicBlockParseState();
             continue;
         }
         if (auto instr = CheckIfInstruction(line, instrMap, underProcessedConnections, currentLine, sourcePath_, diagnosticEngine); instr != nullptr)
         {
-            if (currentBlock == nullptr) {
-                diagnosticEngine.ThrowError("Instruction outside of a basic block", currentLine, sourcePath_);
+            if (!CheckInstrOrderErrors(currentBlock, bbParseState, instr, {sourcePath_, currentLine}, diagnosticEngine)) {
                 continue;
-            }
-            if (firstNonPhiProcessed && instr->GetOpcode() == ir::instr::InstrOpcode::PHI) {
-                diagnosticEngine.ThrowError("Phi instructions must go first", currentLine, sourcePath_);
-            }
-            if(!firstNonPhiProcessed && instr->GetOpcode() != ir::instr::InstrOpcode::PHI) {
-                firstNonPhiProcessed = true;
             }
             currentBlock->AppendInstr(instr);
             continue;

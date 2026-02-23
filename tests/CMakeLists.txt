@@ -25,6 +25,7 @@ set(TESTS_DATA
     "source_ir_builder_2 source_ir_builder_2.cpp ${EXPECTED_MODE} ./source_ir_builder_2.fa"
     "source_ir_builder_3 source_ir_builder_3.cpp ${EXPECTED_MODE} ./source_ir_builder_3.fa"
     "source_ir_builder_4 source_ir_builder_4.cpp ${EXPECTED_MODE} ./source_ir_builder_4.fa"
+    "source_ir_builder_5 source_ir_builder_5.cpp ${EXPECTED_MODE} ./source_ir_builder_5.fa"
 )
 
 foreach(TEST_DATA IN ITEMS ${TESTS_DATA})

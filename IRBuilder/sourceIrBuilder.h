@@ -28,10 +28,19 @@ public:
         std::filesystem::path path;
     };
 
+
+    struct Position {
+        std::filesystem::path &file;
+        size_t line;
+    };
+
     DiagnosticsEngine() {}
 
     void ThrowError(std::string message, size_t line, std::filesystem::path &path) {
         ThrowDiagnostic(Diagnostic {DiagnosticType::Error, message, line, path});
+    }
+    void ThrowError(std::string message, Position &position) {
+        ThrowDiagnostic(Diagnostic {DiagnosticType::Error, message, position.line, position.file});
     }
     void ThrowDiagnostic(Diagnostic diagnostic) {
         diagnostics_.push_back(diagnostic);

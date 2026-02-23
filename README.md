@@ -74,7 +74,7 @@ v3, v4 - parameters from input instructions
 Compare two input values and if condition is true
 go to first successor basic block
 else go to second successor basic block
-``` 8 if.gt v1 v3 ```
+``` 8.void if.gt v1 v3 ```
 if flags:
 gt, lt, ge, le, eq, ne
 

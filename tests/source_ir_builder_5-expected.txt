@@ -1,0 +1,22 @@
+method graph: source_ir_builder_5.fa
+    basic block 0 -> bb1, bb2
+        0.u32 const 1
+        1.u32 const 1
+        2.u32 add v0 v1 
+        3.u32 add v0 v1 
+        4.u32 add v0 v1 
+        5.u32 add v0 v1 
+        6.void if.le v2 v1 
+        
+    bb0 -> basic block 1 -> bb2
+        7.u32 sub v2 v1 
+        
+    bb0, bb1 -> basic block 2 -> bb3
+        8.u32 phi v5 v7 
+        9.u32 mul v8 v2 
+        10.u64 cast v9 
+        
+    bb2 -> basic block 3 -> 
+        11.u64 return v10 
+        
+    

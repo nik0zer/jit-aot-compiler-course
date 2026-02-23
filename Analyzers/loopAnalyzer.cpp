@@ -81,6 +81,7 @@ void LoopAnalyzer::CollectBackEdgesDFSHelper(
         // reducible loop
         if (succ->GetLoop() == nullptr) {
           auto loop = new Loop(blockToNodeMap_[succ]);
+          loop->SetReducibility(true);
           reducibleLoops_.push_back(loop);
           succ->SetLoop(loop);
         }
@@ -109,6 +110,7 @@ void LoopAnalyzer::CollectBackEdgesDFSHelper(
           // New irreducible loop
           auto loop = new Loop(nullptr); // Head is null
           irreducibleLoops_.push_back(loop);
+          loop->SetReducibility(false);
 
           loop->AddNode(blockToNodeMap_[succ]);
           loop->AddNode(blockToNodeMap_[block]);

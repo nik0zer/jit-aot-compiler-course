@@ -26,6 +26,9 @@ set(TESTS_DATA
     "source_ir_builder_3 source_ir_builder_3.cpp ${EXPECTED_MODE} ./source_ir_builder_3.fa"
     "source_ir_builder_4 source_ir_builder_4.cpp ${EXPECTED_MODE} ./source_ir_builder_4.fa"
     "source_ir_builder_5 source_ir_builder_5.cpp ${EXPECTED_MODE} ./source_ir_builder_5.fa"
+    "test_linear_order_1 find_linear_order.cpp ${EXPECTED_MODE} ./test_linear_order_1.fa"
+    "test_linear_order_2 find_linear_order.cpp ${EXPECTED_MODE} ./test_linear_order_2.fa"
+    "test_linear_order_3 find_linear_order.cpp ${EXPECTED_MODE} ./test_linear_order_3.fa"
 )
 
 foreach(TEST_DATA IN ITEMS ${TESTS_DATA})

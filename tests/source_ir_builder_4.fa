@@ -1,5 +1,5 @@
 10.u32 const 1
-bb 0 -> bb 1, bb 2
+-> bb 0 -> bb 1, bb 2
 0.u32 consadst 1
 1.u32 const 1
 2.u32 adssd v0 v1
@@ -12,7 +12,7 @@ bb 0 -> bb 1, bb 2
 bb 0 -> bb 1 -> bb 2
 6.u32 subb v2 v1
 
-bb 0, bb 1 -> bb 2
+bb 0, bb 1 -> bb 2 ->
 7 mul v2 v2
 
 bb 5

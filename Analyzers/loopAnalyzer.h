@@ -22,10 +22,14 @@ public:
 
   void AddSubLoop(Loop *loop) { subLoops.insert(loop); }
 
+  bool IsReducible() { return isReducible_; }
+  void SetReducibility(bool isReducible) { isReducible_ = isReducible; }
+
 private:
   BlockWithIndex *head;
   std::set<BlockWithIndex *> nodes;
   std::set<Loop *> subLoops;
+  bool isReducible_ = false;
 };
 
 class LoopAnalyzer {

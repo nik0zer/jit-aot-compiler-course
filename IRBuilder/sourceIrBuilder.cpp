@@ -64,7 +64,7 @@ ir::BasicBlock *CheckIfBasicBlock(std::string_view line, ir::MethodGraph &graph,
     str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
     str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
 
-    std::regex bbRegex(R"((?:((?:bb \d+)(?:, ?(?:bb \d+))*) -> )?(bb \d+)(?: -> ((?:bb \d+)(?:, ?(?:bb \d+))*))?)");
+    std::regex bbRegex(R"((?:(?:((?:bb \d+)(?:, ?(?:bb \d+))*) ?-> ?)|(?:-> ?))?(bb \d+)(?:(?: ?-> ?((?:bb \d+)(?:, ?(?:bb \d+))*))|(?: ?->))?)");
     std::smatch match;
 
     if (std::regex_match(str, match, bbRegex)) {
@@ -535,30 +535,32 @@ ir::MethodGraph *SourceIrBuilder::Build(std::ostream &diagnosticOutput) {
         diagnosticEngine.ThrowError("Syntax error", currentLine, sourcePath_);
     }
 
-    auto checkIfUnresolved = [&](auto &it, auto &map, auto &connection) {
+    auto checkIfUnresolved = [&](auto &it, auto &map, auto &connection, std::string_view objectType, size_t objectId) -> bool {
         if (it == map.end()) {
-            diagnosticEngine.ThrowError("Unresolved object", connection.position.line, connection.position.file);
+            std::stringstream ss;
+            ss << "Unresolved object " << objectType << " : " << std::to_string(objectId);
+            diagnosticEngine.ThrowError(ss.str(), connection.position.line, connection.position.file);
             return false;
         }
         return true;
     };
     for (auto &predConnection : underProcessedConnections.unresolvedPreds) {
         auto bbIt = blocksMap.find(predConnection.inputObjectId);
-        if (!checkIfUnresolved(bbIt, blocksMap, predConnection)) {
+        if (!checkIfUnresolved(bbIt, blocksMap, predConnection, "bb pred", predConnection.inputObjectId)) {
             continue;
         }
         predConnection.objectWithUnresolvedConnection->SetPred(bbIt->second, predConnection.numOfInput);
     }
     for (auto &succConnection : underProcessedConnections.unresolvedSuccs) {
         auto bbIt = blocksMap.find(succConnection.inputObjectId);
-        if (!checkIfUnresolved(bbIt, blocksMap, succConnection)) {
+        if (!checkIfUnresolved(bbIt, blocksMap, succConnection, "bb succ", succConnection.inputObjectId)) {
             continue;
         }
         succConnection.objectWithUnresolvedConnection->SetSucc(bbIt->second, succConnection.numOfInput);
     }
     for (auto &input : underProcessedConnections.unresolvedInputs) {
         auto instrIt = instrMap.find(input.inputObjectId);
-        if (!checkIfUnresolved(instrIt, instrMap, input)) {
+        if (!checkIfUnresolved(instrIt, instrMap, input, "instr", input.inputObjectId)) {
             continue;
         }
         input.objectWithUnresolvedConnection->SetInput(instrIt->second, input.inputObjectId);

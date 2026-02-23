@@ -1,4 +1,4 @@
-bb 0 -> bb 1, bb 2
+-> bb 0 -> bb 1, bb 2
 0.u32 const 1
 1.u32 const 1
 2.u32 add v0 v1
@@ -6,5 +6,5 @@ bb 0 -> bb 1, bb 2
 bb 0 -> bb 1 -> bb 2
 3.u32 sub v2 v1
 
-bb 0, bb 1 -> bb 2
+bb 0, bb 1 -> bb 2 ->
 4.u32 mul v2 v2

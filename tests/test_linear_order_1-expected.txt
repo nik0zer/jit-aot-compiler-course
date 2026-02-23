@@ -1,0 +1,16 @@
+method graph: test_linear_order_1.fa
+    basic block 0 -> bb1
+        
+    bb0, bb5 -> basic block 1 -> bb2, bb3
+        
+    bb1 -> basic block 2 -> bb4
+        
+    bb2 -> basic block 4 -> bb5
+        
+    bb4 -> basic block 5 -> bb1
+        
+    bb1 -> basic block 3 -> bb7
+        
+    bb3 -> basic block 7 -> 
+        
+    linear order: bb 0, bb 1, bb 2, bb 4, bb 5, bb 3, bb 7

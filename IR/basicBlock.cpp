@@ -41,10 +41,17 @@ void BasicBlock::DumpSuccessors(IrDumper &dumper) {
   }
 }
 
-void BasicBlock::Dump(IrDumper &dumper) {
+void BasicBlock::Dump(IrDumper &dumper, bool dumpLiveness) {
   DumpPredecessors(dumper);
   if (!preds_.empty()) {
     dumper.Add(" -> ");
+  }
+  if (dumpLiveness) {
+    dumper.Add("[ ");
+    dumper.Add(liveRange_.first);
+    dumper.Add(" : ");
+    dumper.Add(liveRange_.second);
+    dumper.Add(" ] ");
   }
   dumper.Add("basic block ");
   dumper.Add(id_);
@@ -56,7 +63,7 @@ void BasicBlock::Dump(IrDumper &dumper) {
   dumper.Endl();
   auto instr = first_;
   while (instr != nullptr) {
-    instr->Dump(dumper);
+    instr->Dump(dumper, dumpLiveness);
     instr = instr->GetNextInstr();
     dumper.Endl();
   }

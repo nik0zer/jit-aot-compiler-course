@@ -57,7 +57,7 @@ public:
     return freeId;
   }
 
-  void Dump(IrDumper &dumper);
+  void Dump(IrDumper &dumper, bool dumpLiveness = false) const;
 
   ~MethodGraph();
 

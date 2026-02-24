@@ -3,8 +3,8 @@
 
 namespace ir::instr {
 
-void ParamInstr::Dump(IrDumper &dumper) {
-  Instr::Dump(dumper);
+void ParamInstr::Dump(IrDumper &dumper, bool dumpLiveness) {
+  Instr::Dump(dumper, dumpLiveness);
   dumper.Add(" param ");
   dumper.Add(id_);
 }

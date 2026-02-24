@@ -2,8 +2,8 @@
 
 namespace ir::instr {
 
-void CallInstr::Dump(IrDumper &dumper) {
-  Instr::Dump(dumper);
+void CallInstr::Dump(IrDumper &dumper, bool dumpLiveness) {
+  Instr::Dump(dumper, dumpLiveness);
   dumper.Add(" ");
   dumper.Add(methodId_);
   dumper.Add(" ");

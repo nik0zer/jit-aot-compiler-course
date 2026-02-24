@@ -54,7 +54,7 @@ public:
     return std::holds_alternative<T>(value_);
   }
 
-  void Dump(IrDumper &dumper) override;
+  void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
 
 private:
   template <typename T> void AdjustValueTypeByTypeId(TypeId type, T value) {

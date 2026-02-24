@@ -24,7 +24,7 @@ public:
     }
   }
 
-  void Dump(IrDumper &dumper) override;
+  void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
 };
 
 } // namespace ir::instr

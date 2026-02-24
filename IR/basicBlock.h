@@ -9,6 +9,7 @@
 #include <array>
 #include <cstddef>
 #include <iostream>
+#include <utility>
 #include <vector>
 
 namespace analyzer {
@@ -129,6 +130,13 @@ public:
     delete instr;
   }
 
+  void ClearInstructions() {
+    first_ = nullptr;
+    lastPhi_ = nullptr;
+    firstNonPhi_ = nullptr;
+    last_ = nullptr;
+  }
+
   void SetParent(MethodGraph *parent) { parent_ = parent; }
 
   void SetPreds(const std::vector<BasicBlock *> &preds) { preds_ = preds; }
@@ -157,7 +165,7 @@ public:
   instr::Instr *GetFirstNonPhiInstr() { return firstNonPhi_; }
   instr::Instr *GetLastInstr() { return last_; }
 
-  void Dump(IrDumper &dumper);
+  void Dump(IrDumper &dumper, bool dumpLiveness = false);
 
   void SetId(BlockId id) { id_ = id; }
   BlockId GetId() const { return id_; }
@@ -192,6 +200,11 @@ public:
   void SetLoop(analyzer::Loop *loop) { loop_ = loop; }
   analyzer::Loop *GetLoop() { return loop_; }
 
+using LiveRange = std::pair<instr::Instr::live_t, instr::Instr::live_t>;
+
+  const LiveRange &GetLiveRange() const { return liveRange_; }
+  void SetLiveRange(const LiveRange &liveRange) { liveRange_ = liveRange; }
+
   friend class MethodGraph;
   friend class analyzer::DominatorAnalyzer;
 
@@ -213,6 +226,8 @@ private:
   BasicBlock *iDominator_{nullptr};
 
   analyzer::Loop *loop_{nullptr};
+
+  LiveRange liveRange_ {};
 };
 
 } // namespace ir

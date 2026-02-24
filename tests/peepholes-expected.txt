@@ -1,7 +1,7 @@
 method graph: TestOptimizerPasses_2
     basic block 0 -> bb1
         0.i32 param 0
-        1.u32 param 0
+        1.u32 param 1
         
     bb0 -> basic block 1 -> bb2
         2.i32 const 0
@@ -46,7 +46,7 @@ method graph: TestOptimizerPasses_2
 method graph: TestOptimizerPasses_2
     basic block 0 -> bb1
         0.i32 param 0
-        1.u32 param 0
+        1.u32 param 1
         
     bb0 -> basic block 1 -> bb2
         2.i32 const 0

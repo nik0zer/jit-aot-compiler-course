@@ -43,14 +43,13 @@ public:
 
 private:
   void destroyNodes(TreeNode *node) {
-    if (node == nullptr)
+    if (node == nullptr) {
       return;
-    for (auto child : node->children) {
-      if (child != nullptr) {
-        destroyNodes(child);
-        delete child;
-      }
     }
+    for (auto child : node->children) {
+      destroyNodes(child);
+    }
+    delete node;
   }
 
   TreeNode *createNode(BlockWithIndex block, TreeNode *parent);

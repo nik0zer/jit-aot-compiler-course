@@ -21,8 +21,8 @@ constexpr std::string_view IfTypeToString(IfType type) {
   return "";
 }
 
-void IfInstr::Dump(IrDumper &dumper) {
-  Instr::Dump(dumper);
+void IfInstr::Dump(IrDumper &dumper, bool dumpLiveness) {
+  Instr::Dump(dumper, dumpLiveness);
   dumper.Add(" if.");
   dumper.Add(IfTypeToString(type_).data());
   dumper.Add(" ");

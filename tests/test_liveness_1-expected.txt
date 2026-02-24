@@ -1,0 +1,47 @@
+method graph: test_liveness_1.fa
+    basic block 0 -> bb1
+        0.u64 const 1
+        1.u64 const 10
+        2.u64 const 20
+        
+    bb2, bb0 -> basic block 1 -> bb2, bb3
+        3.u64 phi v7 v0 
+        4.u64 phi v8 v1 
+        5.u64 const 0
+        6.void if.ne v4 v0 
+        
+    bb1 -> basic block 2 -> bb1
+        7.u64 mul v4 v3 
+        8.u64 sub v4 v0 
+        
+    bb1 -> basic block 3 -> bb4
+        9.u64 add v2 v3 
+        10.u64 return v9 
+        
+    bb3 -> basic block 4 -> 
+        
+    linear order: bb 0, bb 1, bb 2, bb 3, bb 4
+
+method graph: test_liveness_1.fa
+    [ 0 : 8 ] basic block 0 -> bb1
+        [ live: 2 lin: 0 range: [2:20] intervals: [ [14:18]  [8:14]  [8:12]  [8:20]  [2:8] ] ] 0.u64 const 1
+        [ live: 4 lin: 1 range: [4:8] intervals: [ [4:8] ] ] 1.u64 const 10
+        [ live: 6 lin: 2 range: [6:22] intervals: [ [20:22]  [8:14]  [8:20]  [6:8] ] ] 2.u64 const 20
+        
+    bb2, bb0 -> [ 8 : 14 ] basic block 1 -> bb2, bb3
+        [ live: 8 lin: 3 range: [8:22] intervals: [ [20:22]  [14:16]  [8:14] ] ] 3.u64 phi v7 v0 
+        [ live: 8 lin: 4 range: [8:18] intervals: [ [14:18]  [14:16]  [8:14]  [8:12] ] ] 4.u64 phi v8 v1 
+        [ live: 10 lin: 5 range: [10:10] intervals: [ [10:10] ] ] 5.u64 const 0
+        [ live: 12 lin: 6 range: [12:12] intervals: [ [12:12] ] ] 6.void if.ne v4 v0 
+        
+    bb1 -> [ 14 : 20 ] basic block 2 -> bb1
+        [ live: 16 lin: 7 range: [16:20] intervals: [ [16:20] ] ] 7.u64 mul v4 v3 
+        [ live: 18 lin: 8 range: [18:20] intervals: [ [18:20] ] ] 8.u64 sub v4 v0 
+        
+    bb1 -> [ 20 : 26 ] basic block 3 -> bb4
+        [ live: 22 lin: 9 range: [22:24] intervals: [ [22:24] ] ] 9.u64 add v2 v3 
+        [ live: 24 lin: 10 range: [24:24] intervals: [ [24:24] ] ] 10.u64 return v9 
+        
+    bb3 -> [ 26 : 28 ] basic block 4 -> 
+        
+    

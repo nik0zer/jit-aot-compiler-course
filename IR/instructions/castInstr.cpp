@@ -3,8 +3,8 @@
 
 namespace ir::instr {
 
-void CastInstr::Dump(IrDumper &dumper) {
-  Instr::Dump(dumper);
+void CastInstr::Dump(IrDumper &dumper, bool dumpLiveness) {
+  Instr::Dump(dumper, dumpLiveness);
   dumper.Add(" cast ");
   DumpInputs(dumper);
 }

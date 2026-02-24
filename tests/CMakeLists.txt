@@ -29,6 +29,7 @@ set(TESTS_DATA
     "test_linear_order_1 find_linear_order.cpp ${EXPECTED_MODE} ./test_linear_order_1.fa"
     "test_linear_order_2 find_linear_order.cpp ${EXPECTED_MODE} ./test_linear_order_2.fa"
     "test_linear_order_3 find_linear_order.cpp ${EXPECTED_MODE} ./test_linear_order_3.fa"
+    "test_liveness_1 find_live_ranges.cpp ${EXPECTED_MODE} ./test_liveness_1.fa"
 )
 
 foreach(TEST_DATA IN ITEMS ${TESTS_DATA})

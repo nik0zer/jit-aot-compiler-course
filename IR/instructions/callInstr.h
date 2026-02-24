@@ -26,7 +26,7 @@ public:
 
   bool IsControllFlow() override final { return true; }
 
-  void Dump(IrDumper &dumper) override;
+  void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
 
 private:
   MethodId methodId_;

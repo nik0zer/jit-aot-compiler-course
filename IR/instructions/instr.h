@@ -42,6 +42,7 @@ protected:
         type_(type) {}
 
 public:
+  virtual ~Instr() = default;
   void SetInstrId(InstrId id) { id_ = id; }
   InstrId GetInstrId() const { return id_; }
 
@@ -71,7 +72,12 @@ public:
   }
 
   void SetInput(Instr *input, size_t index) {
-    inputs_.insert(inputs_.begin() + index, input);
+    if (index < inputs_.size()) {
+      inputs_[index] = input;
+    }
+    else {
+      inputs_.push_back(input);
+    }
     if (input != nullptr) {
       input->AddUser(this);
     }
@@ -142,7 +148,27 @@ public:
 
   virtual bool IsControllFlow() { return false; }
 
-  virtual void Dump(IrDumper &dumper) {
+  virtual void Dump(IrDumper &dumper, bool dumpLiveness = false) {
+    if (dumpLiveness) {
+      dumper.Add("[ live: ");
+      dumper.Add(liveRange_.GetLive());
+      dumper.Add(" lin: ");
+      dumper.Add(liveRange_.GetLin());
+      dumper.Add(" range: [");
+      dumper.Add(liveRange_.GetRange().first);
+      dumper.Add(":");
+      dumper.Add(liveRange_.GetRange().second);
+      dumper.Add("] intervals: [");
+      for (auto interval : liveRange_.GetIntervals()) {
+        dumper.Add(" [");
+        dumper.Add(interval.first);
+        dumper.Add(":");
+        dumper.Add(interval.second);
+        dumper.Add("] ");
+      }
+      dumper.Add("]");
+      dumper.Add(" ] ");
+    }
     dumper.Add(id_);
     dumper.Add(".");
     dumper.Add(TypeIdToString(type_).data());
@@ -163,9 +189,62 @@ public:
 
   TypeId GetType() const { return type_; }
 
+using live_t = size_t;
+using LiveInterval = std::pair<live_t, live_t>;
+using lin_t = size_t;
+class LiveRange {
+public:
+  LiveRange() = default;
+  void AddUse(live_t use) { uses.push_back(use); }
+  void AddInterval(LiveInterval interval)
+  {
+    intervals.push_back(interval);
+    if (range.first > interval.first) {
+      range.first = interval.first;
+    }
+    if (range.second < interval.second) {
+      range.second = interval.second;
+    }
+    if (!isRangeSet) {
+      range = interval;
+      isRangeSet = true;
+    }
+  }
+
+  const std::vector<LiveInterval> &GetIntervals() const { return intervals; }
+  void SetIntervals(std::vector<LiveInterval> intervals) {
+    this->intervals = intervals;
+  }
+
+  void SetUses(std::vector<live_t> uses) { this->uses = uses; }
+  const std::vector<live_t> &GetUses() const { return uses; }
+
+  void SetRange(LiveInterval range) { this->range = range; }
+  const LiveInterval &GetRange() const { return range; }
+
+  lin_t GetLin() const { return lin; }
+  void SetLin(lin_t lin) { this->lin = lin; }
+
+  live_t GetLive() const { return live; }
+  void SetLive(live_t live) { this->live = live; }
+
+  void SetIsRangeSet(bool isRangeSet) { this->isRangeSet = isRangeSet; }
+
+private:
+  lin_t lin {};
+  live_t live {};
+  std::vector<LiveInterval> intervals {};
+  std::vector<live_t> uses {};
+  LiveInterval range {};
+  bool isRangeSet = false;
+};
+
+  LiveRange &GetLiveRange() { return liveRange_; }
+
 protected:
   inline void DumpInput(IrDumper &dumper, Instr *input) {
     if (input == nullptr) {
+      dumper.Add("v.null");
       return;
     }
     dumper.Add("v");
@@ -186,6 +265,7 @@ protected:
   std::vector<Instr *> inputs_;
   std::set<Instr *> users_;
   TypeId type_;
+  LiveRange liveRange_ {};
 };
 
 } // namespace ir::instr

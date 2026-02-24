@@ -31,13 +31,13 @@ MethodGraph::~MethodGraph() {
   }
 }
 
-void MethodGraph::Dump(IrDumper &dumper) {
+void MethodGraph::Dump(IrDumper &dumper, bool dumpLiveness) const {
   dumper.Add("method graph: ");
   dumper.Add(name_);
   dumper.IncreaseIndent();
   dumper.Endl();
   for (auto block : blocks_) {
-    block->Dump(dumper);
+    block->Dump(dumper, dumpLiveness);
     dumper.Endl();
   }
   dumper.DecreaseIndent();

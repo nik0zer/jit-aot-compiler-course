@@ -214,6 +214,7 @@ AddParsedInstr(ir::instr::Instr *instr, size_t id,
     diagnosticEngine.ThrowError("Instruction with id " + std::to_string(id) +
                                     " already exists",
                                 lineNum, file);
+    delete instr;
     return (ir::instr::Instr *)nullptr;
   }
   instr->SetInstrId(id);
@@ -423,14 +424,18 @@ ParsePhiInstr(const std::string &line,
     std::regex argRegex(R"(v(\d+))");
     std::sregex_iterator it(argsStr.begin(), argsStr.end(), argRegex);
     std::sregex_iterator end;
+    auto argsSize = std::count(argsStr.begin(), argsStr.end(), 'v');
+    inputs.reserve(argsSize);
+    for (size_t i = 0; i < argsSize; ++i) {
+      inputs.push_back(nullptr);
+    }
     size_t inputIdx = 0;
     for (; it != end; ++it, ++inputIdx) {
       size_t argId = std::stoul((*it)[1]);
       auto argIt = instrMap.find(argId);
       if (argIt != instrMap.end()) {
-        inputs.push_back(argIt->second);
+        inputs[inputIdx] = argIt->second;
       } else {
-        inputs.push_back(nullptr);
         underProcessedConnections.unresolvedInputs.push_back(
             {nullptr, inputIdx, argId, {file, lineNum}});
       }
@@ -661,13 +666,19 @@ ir::MethodGraph *SourceIrBuilder::Build(std::ostream &diagnosticOutput) {
       continue;
     }
     input.objectWithUnresolvedConnection->SetInput(instrIt->second,
-                                                   input.inputObjectId);
+                                                   input.numOfInput);
   }
 
   source->close();
   auto hasErrors = diagnosticEngine.HasErrors();
   diagnosticEngine.Flush(diagnosticOutput);
   if (hasErrors) {
+    for (auto* block : graph->GetBlocks()) {
+        block->ClearInstructions();
+    }
+    for (auto const& [id, instr] : instrMap) {
+        delete instr;
+    }
     delete graph;
     return nullptr;
   }

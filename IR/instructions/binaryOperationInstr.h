@@ -25,7 +25,7 @@ public:
   void SetOperation(BinaryOperationType op) { op_ = op; }
   BinaryOperationType GetOperation() const { return op_; }
 
-  void Dump(IrDumper &dumper) override;
+  void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
 
 private:
   BinaryOperationType op_;

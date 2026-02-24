@@ -27,8 +27,8 @@ constexpr std::string_view BinaryOperationToString(BinaryOperationType op) {
   return "";
 }
 
-void BinaryOperationInstr::Dump(IrDumper &dumper) {
-  Instr::Dump(dumper);
+void BinaryOperationInstr::Dump(IrDumper &dumper, bool dumpLiveness) {
+  Instr::Dump(dumper, dumpLiveness);
   dumper.Add(" ");
   dumper.Add(BinaryOperationToString(op_).data());
   dumper.Add(" ");

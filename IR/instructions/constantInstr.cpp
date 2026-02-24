@@ -4,8 +4,8 @@
 
 namespace ir::instr {
 
-void ConstantInstr::Dump(IrDumper &dumper) {
-  Instr::Dump(dumper);
+void ConstantInstr::Dump(IrDumper &dumper, bool dumpLiveness) {
+  Instr::Dump(dumper, dumpLiveness);
   dumper.Add(" const ");
 
   std::visit(

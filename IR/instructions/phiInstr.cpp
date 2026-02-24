@@ -2,8 +2,8 @@
 
 namespace ir::instr {
 
-void PhiInstr::Dump(IrDumper &dumper) {
-  Instr::Dump(dumper);
+void PhiInstr::Dump(IrDumper &dumper, bool dumpLiveness) {
+  Instr::Dump(dumper, dumpLiveness);
   dumper.Add(" phi ");
   DumpInputs(dumper);
 }

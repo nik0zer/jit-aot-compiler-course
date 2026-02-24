@@ -10,12 +10,12 @@ namespace IrBuilder {
 
 class IrBuilder {
 public:
-    IrBuilder() = default;
-    ~IrBuilder() = default;
+  IrBuilder() = default;
+  ~IrBuilder() = default;
 
-    virtual ir::MethodGraph *Build(std::ostream &diagnosticOutput) = 0;
+  virtual ir::MethodGraph *Build(std::ostream &diagnosticOutput) = 0;
 };
 
-}
+} // namespace IrBuilder
 
 #endif

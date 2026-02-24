@@ -132,9 +132,7 @@ public:
   void SetParent(MethodGraph *parent) { parent_ = parent; }
 
   void SetPreds(const std::vector<BasicBlock *> &preds) { preds_ = preds; }
-  void SetPreds(std::vector<BasicBlock *> &&preds) {
-    preds_ = preds;
-  }
+  void SetPreds(std::vector<BasicBlock *> &&preds) { preds_ = preds; }
   void SetPred(BasicBlock *pred, size_t index) { preds_[index] = pred; }
   void SetSuccs(const std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &succs) {
     succs_ = succs;

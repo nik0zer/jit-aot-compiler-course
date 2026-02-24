@@ -14,77 +14,76 @@ namespace IrBuilder {
 
 class DiagnosticsEngine {
 public:
-    enum class DiagnosticType {
-        Error,
-        Warning,
-        Info
-    };
+  enum class DiagnosticType { Error, Warning, Info };
 
-    struct Diagnostic {
-    public:
-        DiagnosticType type;
-        std::string message;
-        size_t line;
-        std::filesystem::path path;
-    };
+  struct Diagnostic {
+  public:
+    DiagnosticType type;
+    std::string message;
+    size_t line;
+    std::filesystem::path path;
+  };
 
+  struct Position {
+    std::filesystem::path &file;
+    size_t line;
+  };
 
-    struct Position {
-        std::filesystem::path &file;
-        size_t line;
-    };
+  DiagnosticsEngine() {}
 
-    DiagnosticsEngine() {}
+  void ThrowError(std::string message, size_t line,
+                  std::filesystem::path &path) {
+    ThrowDiagnostic(Diagnostic{DiagnosticType::Error, message, line, path});
+  }
+  void ThrowError(std::string message, Position &position) {
+    ThrowDiagnostic(Diagnostic{DiagnosticType::Error, message, position.line,
+                               position.file});
+  }
+  void ThrowDiagnostic(Diagnostic diagnostic) {
+    diagnostics_.push_back(diagnostic);
+  }
 
-    void ThrowError(std::string message, size_t line, std::filesystem::path &path) {
-        ThrowDiagnostic(Diagnostic {DiagnosticType::Error, message, line, path});
+  bool HasErrors() {
+    return std::find_if(diagnostics_.begin(), diagnostics_.end(),
+                        [](Diagnostic diagnostic) {
+                          return diagnostic.type == DiagnosticType::Error;
+                        }) != diagnostics_.end();
+  }
+
+  std::string ToString() {
+    std::stringstream result;
+    for (auto diagnostic : diagnostics_) {
+      result << diagnostic.path.string() + ":" +
+                    std::to_string(diagnostic.line) + ": " +
+                    diagnostic.message + "\n";
     }
-    void ThrowError(std::string message, Position &position) {
-        ThrowDiagnostic(Diagnostic {DiagnosticType::Error, message, position.line, position.file});
-    }
-    void ThrowDiagnostic(Diagnostic diagnostic) {
-        diagnostics_.push_back(diagnostic);
-    }
+    return result.str();
+  }
 
-    bool HasErrors()
-    {
-        return std::find_if(diagnostics_.begin(), diagnostics_.end(),
-        [](Diagnostic diagnostic) { return diagnostic.type == DiagnosticType::Error; }) != diagnostics_.end();
-    }
+  void Flush(std::ostream &os) {
+    os << ToString();
+    diagnostics_.clear();
+  }
 
-    std::string ToString() {
-        std::stringstream result;
-        for (auto diagnostic : diagnostics_) {
-            result << diagnostic.path.string() + ":" + std::to_string(diagnostic.line) + ": " + diagnostic.message + "\n";
-        }
-        return result.str();
-    }
+  void Flush() { Flush(std::cout); }
 
-    void Flush(std::ostream &os)
-    {
-        os << ToString();
-        diagnostics_.clear();
-    }
-
-    void Flush() { Flush(std::cout); }
-
-    void Clear() { diagnostics_.clear(); }
+  void Clear() { diagnostics_.clear(); }
 
 private:
-    std::vector<Diagnostic> diagnostics_;
+  std::vector<Diagnostic> diagnostics_;
 };
 
 class SourceIrBuilder : public IrBuilder {
 public:
-    SourceIrBuilder(std::string_view source) : sourcePath_(source) {}
-    void SetSource(std::string_view source) { sourcePath_ = source; }
+  SourceIrBuilder(std::string_view source) : sourcePath_(source) {}
+  void SetSource(std::string_view source) { sourcePath_ = source; }
 
-    ir::MethodGraph *Build(std::ostream &diagnosticOutput) override;
+  ir::MethodGraph *Build(std::ostream &diagnosticOutput) override;
 
 private:
-    std::filesystem::path sourcePath_;
+  std::filesystem::path sourcePath_;
 };
 
-}
+} // namespace IrBuilder
 
 #endif

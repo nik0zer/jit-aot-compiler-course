@@ -18,5 +18,4 @@ private:
 
 } // namespace analyzer
 
-
 #endif

@@ -33,6 +33,7 @@ ${ANALYZERS_DIR}/dominatorAnalyzer.cpp
 ${ANALYZERS_DIR}/loopAnalyzer.cpp
 ${ANALYZERS_DIR}/linearOrderAnalyzer.cpp
 ${ANALYZERS_DIR}/livenessAnalyzer.cpp
+${ANALYZERS_DIR}/regAlloc.cpp
 ${ANALYZERS_DIR}/util.cpp
 )
 

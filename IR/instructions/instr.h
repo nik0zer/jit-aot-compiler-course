@@ -5,11 +5,14 @@
 #include "irDumper.h"
 #include "type.h"
 #include <cstddef>
+#include <cstdint>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 namespace ir {
 class BasicBlock;
+class MemPlaceInfo;
 } // namespace ir
 
 namespace ir::instr {
@@ -237,6 +240,22 @@ private:
   std::vector<live_t> uses {};
   LiveInterval range {};
   bool isRangeSet = false;
+};
+
+class RegAllocInfo {
+public:
+  RegAllocInfo() = default;
+
+  void AddAllocationRange(MemPlaceInfo *memPlaceInfo, LiveRange liveRange) {
+    allocationRanges[memPlaceInfo] = liveRange;
+  }
+  std::unordered_map<MemPlaceInfo *, LiveRange> &GetAllocationRanges() { return allocationRanges; }
+  void SetAllocationRanges(std::unordered_map<MemPlaceInfo *, LiveRange> &&allocationRanges) {
+    this->allocationRanges = allocationRanges;
+  }
+
+private:
+  std::unordered_map<MemPlaceInfo *, LiveRange> allocationRanges {};
 };
 
   LiveRange &GetLiveRange() { return liveRange_; }

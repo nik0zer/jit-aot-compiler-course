@@ -1,4 +1,5 @@
 #include "livenessAnalyzer.h"
+#include "macro.h"
 #include <unordered_map>
 #include <set>
 
@@ -115,9 +116,8 @@ void LivenessAnalyzer::CalculateLiveRanges()
                 const auto& inputs = phi->GetInputs();
                 if (predIndex < inputs.size()) {
                     auto* inputOp = inputs[predIndex];
-                    if (inputOp != nullptr) {
-                        live.insert(inputOp);
-                    }
+                    ASSERT(inputOp != nullptr)
+                    live.insert(inputOp);
                 }
             }
         }
@@ -127,16 +127,22 @@ void LivenessAnalyzer::CalculateLiveRanges()
         }
 
         for (auto* currentInstr = block->GetLastInstr(); currentInstr != nullptr; currentInstr = currentInstr->GetPrevInstr()) {
-            if (currentInstr->IsPhiInstr()) continue;
+            if (currentInstr->IsPhiInstr()) {
+                for (auto *input : currentInstr->GetInputs()) {
+                    ASSERT(input != nullptr)
+                    input->GetLiveRange().AddUse(currentInstr->GetLiveRange().GetLive());
+                }
+                continue;
+            }
 
             ShortenRangeStart(currentInstr, blockFrom);
             live.erase(currentInstr);
 
             for (auto* input : currentInstr->GetInputs()) {
-                if (input != nullptr) {
-                    input->GetLiveRange().AddInterval({blockFrom, currentInstr->GetLiveRange().GetLive()});
-                    live.insert(input);
-                }
+                ASSERT(input != nullptr)
+                input->GetLiveRange().AddUse(currentInstr->GetLiveRange().GetLive());
+                input->GetLiveRange().AddInterval({blockFrom, currentInstr->GetLiveRange().GetLive()});
+                live.insert(input);
             }
         }
 

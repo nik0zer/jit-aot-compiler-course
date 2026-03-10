@@ -96,7 +96,7 @@ inline const std::string_view TypeIdToString(TypeId type) {
   return "";
 }
 
-inline const size_t TypeIdToSize(TypeId type) {
+inline const uint16_t TypeIdToSize(TypeId type) {
   switch (type) {
   case TypeId::U8:
     return 8;
@@ -126,6 +126,10 @@ inline const size_t TypeIdToSize(TypeId type) {
     UNREACHABLE();
   }
   return 0;
+}
+
+inline bool TypeIdIsFloatingPoint(TypeId type) {
+  return type == TypeId::F32 || type == TypeId::F64;
 }
 
 template <typename Visitor> auto VisitTypeId(TypeId type, Visitor &&visitor) {

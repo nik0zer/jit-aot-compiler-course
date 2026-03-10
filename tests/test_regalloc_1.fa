@@ -1,0 +1,20 @@
+-> bb 0 -> bb 1
+0.u64 const 1
+1.u64 const 10
+2.u64 const 20
+
+bb 2, bb 0 -> bb 1 -> bb 2, bb 3
+3.u64 phi v7 v0
+4.u64 phi v8 v1
+5.u64 const 0
+6.void if.ne v4 v0
+
+bb 1 -> bb 2 -> bb 1
+7.u64 mul v4 v3
+8.u64 sub v4 v0
+
+bb 1 -> bb 3 -> bb 4
+9.u64 add v2 v3
+10.u64 return v9
+
+bb 3 -> bb 4 ->

@@ -32,6 +32,9 @@ set(TESTS_DATA
     "test_liveness_1 find_live_ranges.cpp ${EXPECTED_MODE} ./test_liveness_1.fa"
     "test_liveness_2 find_live_ranges.cpp ${EXPECTED_MODE} ./test_liveness_2.fa"
     "test_liveness_3 find_live_ranges.cpp ${EXPECTED_MODE} ./test_liveness_3.fa"
+    "test_regalloc_1 reg_alloc_1.cpp ${EXPECTED_MODE} ./test_regalloc_1.fa"
+    "test_regalloc_2 reg_alloc_2.cpp ${EXPECTED_MODE} ./test_regalloc_2.fa"
+    "test_regalloc_3 reg_alloc_3.cpp ${EXPECTED_MODE} ./test_regalloc_3.fa"
 )
 
 foreach(TEST_DATA IN ITEMS ${TESTS_DATA})

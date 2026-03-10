@@ -8,12 +8,12 @@ class MethodGraph;
 namespace analyzer {
 class RegAlloc {
 public:
-    RegAlloc(ir::MethodGraph *methodGraph) : graph_(methodGraph) {};
+  RegAlloc(ir::MethodGraph &methodGraph) : graph_(methodGraph){};
 
-    void Allocate(ir::MethodGraph *methodGraph);
+  void Allocate();
 
 private:
-    ir::MethodGraph *graph_;
+  ir::MethodGraph &graph_;
 };
 } // namespace analyzer
 

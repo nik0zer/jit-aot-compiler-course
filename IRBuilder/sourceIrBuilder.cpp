@@ -504,7 +504,7 @@ constexpr std::array<InstrParserFunc, 8> InstrParsers = {
     ParseReturnInstr, ParseCallInstr,
     ParsePhiInstr,    ParseIfInstr};
 
-}
+} // namespace
 
 ir::instr::Instr *
 CheckIfInstruction(std::string_view line,
@@ -673,11 +673,11 @@ ir::MethodGraph *SourceIrBuilder::Build(std::ostream &diagnosticOutput) {
   auto hasErrors = diagnosticEngine.HasErrors();
   diagnosticEngine.Flush(diagnosticOutput);
   if (hasErrors) {
-    for (auto* block : graph->GetBlocks()) {
-        block->ClearInstructions();
+    for (auto *block : graph->GetBlocks()) {
+      block->ClearInstructions();
     }
-    for (auto const& [id, instr] : instrMap) {
-        delete instr;
+    for (auto const &[id, instr] : instrMap) {
+      delete instr;
     }
     delete graph;
     return nullptr;

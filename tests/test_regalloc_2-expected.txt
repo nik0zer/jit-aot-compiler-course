@@ -1,0 +1,67 @@
+method graph: test_regalloc_2.fa
+    basic block 0 -> bb1
+        0.u64 const 1
+        1.u64 const 1
+        2.u16 const 1
+        3.u64 const 10
+        4.u32 cast v2 
+        
+    bb0, bb5 -> basic block 1 -> bb2, bb3
+        5.u64 phi v3 v9 
+        6.u64 phi v1 v11 
+        7.u32 phi v4 v14 
+        8.void if.ne v5 v0 
+        
+    bb1 -> basic block 2 -> bb4
+        9.u64 sub v5 v0 
+        10.u64 cast v7 
+        11.u64 mul v5 v10 
+        
+    bb2 -> basic block 4 -> bb5
+        12.u64 add v11 v5 
+        
+    bb4 -> basic block 5 -> bb1
+        13.u64 or v12 v11 
+        14.u32 cast v13 
+        
+    bb1 -> basic block 3 -> bb7
+        15.u64 mul v6 v7 
+        
+    bb3 -> basic block 7 -> 
+        16.u64 return v15 
+        
+    linear order: bb 0, bb 1, bb 2, bb 4, bb 5, bb 3, bb 7
+
+method graph: test_regalloc_2.fa
+    [ 0 : 12 ] basic block 0 -> bb1
+        [ live: 2 lin: 0 range: [2:34] intervals: [ [16:18]  [12:16]  [12:14]  [12:34]  [2:12] ] uses: [18, 14] ] [ MemPlaces: r1:[2:34] ] 0.u64 const 1
+        [ live: 4 lin: 1 range: [4:12] intervals: [ [4:12] ] uses: [12] ] [ MemPlaces: r0:[4:12] ] 1.u64 const 1
+        [ live: 6 lin: 2 range: [6:10] intervals: [ [6:10] ] uses: [10] ] [ MemPlaces: rs3:[6:10] ] 2.u16 const 1
+        [ live: 8 lin: 3 range: [8:12] intervals: [ [8:12] ] uses: [12] ] [ MemPlaces: st0:[8:12] ] 3.u64 const 10
+        [ live: 10 lin: 4 range: [10:12] intervals: [ [10:12] ] uses: [12] ] [ MemPlaces: ri2:[10:12] ] 4.u32 cast v2 
+        
+    bb0, bb5 -> [ 12 : 16 ] basic block 1 -> bb2, bb3
+        [ live: 12 lin: 5 range: [12:26] intervals: [ [24:26]  [16:24]  [16:22]  [16:18]  [12:16]  [12:14] ] uses: [26, 22, 18, 14] ] [ MemPlaces: r0:[12:26] ] 5.u64 phi v3 v9 
+        [ live: 12 lin: 6 range: [12:36] intervals: [ [34:36]  [12:16] ] uses: [36] ] [ MemPlaces: st0:[12:36] ] 6.u64 phi v1 v11 
+        [ live: 12 lin: 7 range: [12:36] intervals: [ [34:36]  [16:20]  [12:16] ] uses: [36, 20] ] [ MemPlaces: ri2:[12:36] ] 7.u32 phi v4 v14 
+        [ live: 14 lin: 8 range: [14:14] intervals: [ [14:14] ] uses: [] ] 8.void if.ne v5 v0 
+        
+    bb1 -> [ 16 : 24 ] basic block 2 -> bb4
+        [ live: 18 lin: 9 range: [18:34] intervals: [ [28:34]  [24:28]  [18:24] ] uses: [12] ] [ MemPlaces: st1:[18:34] ] 9.u64 sub v5 v0 
+        [ live: 20 lin: 10 range: [20:22] intervals: [ [20:22] ] uses: [22] ] [ MemPlaces: st2:[20:22] ] 10.u64 cast v7 
+        [ live: 22 lin: 11 range: [22:34] intervals: [ [28:34]  [28:30]  [24:28]  [24:26]  [22:24] ] uses: [30, 26, 12] ] [ MemPlaces: st2:[22:34] ] 11.u64 mul v5 v10 
+        
+    bb2 -> [ 24 : 28 ] basic block 4 -> bb5
+        [ live: 26 lin: 12 range: [26:30] intervals: [ [28:30]  [26:28] ] uses: [30] ] [ MemPlaces: r0:[26:30] ] 12.u64 add v11 v5 
+        
+    bb4 -> [ 28 : 34 ] basic block 5 -> bb1
+        [ live: 30 lin: 13 range: [30:32] intervals: [ [30:32] ] uses: [32] ] [ MemPlaces: r0:[30:32] ] 13.u64 or v12 v11 
+        [ live: 32 lin: 14 range: [32:34] intervals: [ [32:34] ] uses: [12] ] [ MemPlaces: r0:[32:34] ] 14.u32 cast v13 
+        
+    bb1 -> [ 34 : 38 ] basic block 3 -> bb7
+        [ live: 36 lin: 15 range: [36:40] intervals: [ [38:40]  [36:38] ] uses: [40] ] [ MemPlaces: st0:[36:40] ] 15.u64 mul v6 v7 
+        
+    bb3 -> [ 38 : 42 ] basic block 7 -> 
+        [ live: 40 lin: 16 range: [40:40] intervals: [ [40:40] ] uses: [] ] 16.u64 return v15 
+        
+    

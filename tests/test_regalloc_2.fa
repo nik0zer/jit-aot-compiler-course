@@ -1,0 +1,30 @@
+-> bb 0 -> bb 1
+0.u64 const 1
+15.u64 const 1
+26.u16 const 1
+1.u64 const 10
+16.u32 cast v26
+
+bb 0, bb 5 -> bb 1 -> bb 2, bb 3
+2.u64 phi v1 v4
+21.u64 phi v15 v5
+22.u32 phi v16 v7
+3.void if.ne v2 v0
+
+bb 1 -> bb 2 -> bb 4
+4.u64 sub v2 v0
+32.u64 cast v22
+5.u64 mul v2 v32
+
+bb 2 -> bb 4 -> bb 5
+6.u64 add v5 v2
+
+bb 4 -> bb 5 -> bb 1
+77.u64 or v6 v5
+7.u32 cast v77
+
+bb 1 -> bb 3 -> bb 7
+8.u64 mul v21 v22
+
+bb 3 -> bb 7 ->
+9.u64 return v8

@@ -200,7 +200,7 @@ public:
   void SetLoop(analyzer::Loop *loop) { loop_ = loop; }
   analyzer::Loop *GetLoop() { return loop_; }
 
-using LiveRange = std::pair<instr::Instr::live_t, instr::Instr::live_t>;
+  using LiveRange = std::pair<instr::Instr::live_t, instr::Instr::live_t>;
 
   const LiveRange &GetLiveRange() const { return liveRange_; }
   void SetLiveRange(const LiveRange &liveRange) { liveRange_ = liveRange; }
@@ -227,7 +227,7 @@ private:
 
   analyzer::Loop *loop_{nullptr};
 
-  LiveRange liveRange_ {};
+  LiveRange liveRange_{};
 };
 
 } // namespace ir

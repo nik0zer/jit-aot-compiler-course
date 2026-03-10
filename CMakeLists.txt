@@ -15,6 +15,7 @@ set(PASSES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Passes)
 set(IR_BUILDER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/IRBuilder)
 
 set(IR_SOURCES
+${INSTR_DIR}/instr.cpp
 ${INSTR_DIR}/binaryOperationInstr.cpp
 ${INSTR_DIR}/callInstr.cpp
 ${INSTR_DIR}/castInstr.cpp

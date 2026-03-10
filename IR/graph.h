@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <limits>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace analyzer {
@@ -22,19 +23,30 @@ using BlockId = std::size_t;
 
 class MemPlaceInfo {
 public:
-  MemPlaceInfo(bool isReg, uint8_t maxSize, size_t id) : isReg_(isReg), maxSize_(maxSize), id_(id) {}
+  MemPlaceInfo(std::string_view name, bool isReg, bool isFloatingPoint,
+               uint16_t maxSize, size_t id)
+      : name_(name), isReg_(isReg), isFloatingPoint_(isFloatingPoint),
+        maxSize_(maxSize), id_(id) {}
 
   bool IsReg() const { return isReg_; }
-  uint8_t GetMaxSize() const { return maxSize_; }
+  bool IsFloatingPoint() const { return isFloatingPoint_; }
+  uint16_t GetMaxSize() const { return maxSize_; }
   size_t GetId() const { return id_; }
+  const std::string &GetName() const { return name_; }
 
+  void SetName(std::string_view name) { name_ = name; }
   void SetIsReg(bool isReg) { isReg_ = isReg; }
-  void SetMaxSize(uint8_t maxSize) { maxSize_ = maxSize; }
+  void SetIsFloatingPoint(bool isFloatingPoint) {
+    isFloatingPoint_ = isFloatingPoint;
+  }
+  void SetMaxSize(uint16_t maxSize) { maxSize_ = maxSize; }
   void SetId(size_t id) { id_ = id; }
 
 private:
-  bool isReg_ {true};
-  uint8_t maxSize_ {64};
+  std::string name_;
+  bool isReg_{true};
+  bool isFloatingPoint_{true};
+  uint16_t maxSize_{64};
   size_t id_;
 };
 
@@ -78,9 +90,16 @@ public:
   }
 
   void SetRegistersInfo(std::vector<MemPlaceInfo> &&info) { registers_ = info; }
-  const std::vector<MemPlaceInfo> &GetRegistersInfo() const { return registers_; }
+  const std::vector<MemPlaceInfo> &GetRegistersInfo() const {
+    return registers_;
+  }
 
-  const std::vector<MemPlaceInfo> &GetStackSlotsInfo() const { return stackSlots_; }
+  void SetStackSlotsInfo(std::vector<MemPlaceInfo *> &&info) {
+    stackSlots_ = info;
+  }
+  const std::vector<MemPlaceInfo *> &GetStackSlotsInfo() const {
+    return stackSlots_;
+  }
 
   void Dump(IrDumper &dumper, bool dumpLiveness = false) const;
 
@@ -93,7 +112,7 @@ public:
 
 private:
   std::vector<MemPlaceInfo> registers_;
-  std::vector<MemPlaceInfo> stackSlots_;
+  std::vector<MemPlaceInfo *> stackSlots_;
   std::vector<BasicBlock *> blocks_;
   std::vector<BasicBlock *> linearOrderedBlocks_;
   std::string name_;

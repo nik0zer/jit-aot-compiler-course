@@ -6,8 +6,10 @@
 #include "type.h"
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <set>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace ir {
@@ -77,8 +79,7 @@ public:
   void SetInput(Instr *input, size_t index) {
     if (index < inputs_.size()) {
       inputs_[index] = input;
-    }
-    else {
+    } else {
       inputs_.push_back(input);
     }
     if (input != nullptr) {
@@ -151,31 +152,7 @@ public:
 
   virtual bool IsControllFlow() { return false; }
 
-  virtual void Dump(IrDumper &dumper, bool dumpLiveness = false) {
-    if (dumpLiveness) {
-      dumper.Add("[ live: ");
-      dumper.Add(liveRange_.GetLive());
-      dumper.Add(" lin: ");
-      dumper.Add(liveRange_.GetLin());
-      dumper.Add(" range: [");
-      dumper.Add(liveRange_.GetRange().first);
-      dumper.Add(":");
-      dumper.Add(liveRange_.GetRange().second);
-      dumper.Add("] intervals: [");
-      for (auto interval : liveRange_.GetIntervals()) {
-        dumper.Add(" [");
-        dumper.Add(interval.first);
-        dumper.Add(":");
-        dumper.Add(interval.second);
-        dumper.Add("] ");
-      }
-      dumper.Add("]");
-      dumper.Add(" ] ");
-    }
-    dumper.Add(id_);
-    dumper.Add(".");
-    dumper.Add(TypeIdToString(type_).data());
-  }
+  virtual void Dump(IrDumper &dumper, bool dumpLiveness = false);
 
 #define DECLARE_IS_CHECKS(instrType, className)                                \
   bool Is##className() const { return op_ == InstrOpcode::instrType; }
@@ -192,72 +169,76 @@ public:
 
   TypeId GetType() const { return type_; }
 
-using live_t = size_t;
-using LiveInterval = std::pair<live_t, live_t>;
-using lin_t = size_t;
-class LiveRange {
-public:
-  LiveRange() = default;
-  void AddUse(live_t use) { uses.push_back(use); }
-  void AddInterval(LiveInterval interval)
-  {
-    intervals.push_back(interval);
-    if (range.first > interval.first) {
-      range.first = interval.first;
+  using live_t = size_t;
+  using LiveInterval = std::pair<live_t, live_t>;
+  using lin_t = size_t;
+  class LiveRange {
+  public:
+    LiveRange() = default;
+    void AddUse(live_t use) { uses.push_back(use); }
+    void AddInterval(LiveInterval interval) {
+      intervals.push_back(interval);
+      if (range.first > interval.first) {
+        range.first = interval.first;
+      }
+      if (range.second < interval.second) {
+        range.second = interval.second;
+      }
+      if (!isRangeSet) {
+        range = interval;
+        isRangeSet = true;
+      }
     }
-    if (range.second < interval.second) {
-      range.second = interval.second;
+
+    const std::vector<LiveInterval> &GetIntervals() const { return intervals; }
+    void SetIntervals(std::vector<LiveInterval> intervals) {
+      this->intervals = intervals;
     }
-    if (!isRangeSet) {
-      range = interval;
-      isRangeSet = true;
+
+    void SetUses(std::vector<live_t> uses) { this->uses = uses; }
+    const std::vector<live_t> &GetUses() const { return uses; }
+
+    void SetRange(LiveInterval range) { this->range = range; }
+    const LiveInterval &GetRange() const { return range; }
+
+    lin_t GetLin() const { return lin; }
+    void SetLin(lin_t lin) { this->lin = lin; }
+
+    live_t GetLive() const { return live; }
+    void SetLive(live_t live) { this->live = live; }
+
+    void SetIsRangeSet(bool isRangeSet) { this->isRangeSet = isRangeSet; }
+
+  private:
+    lin_t lin{};
+    live_t live{};
+    std::vector<LiveInterval> intervals{};
+    std::vector<live_t> uses{};
+    LiveInterval range{};
+    bool isRangeSet = false;
+  };
+
+  using AllocationRanges =
+      std::vector<std::pair<LiveInterval, const MemPlaceInfo *>>;
+  class RegAllocInfo {
+  public:
+    RegAllocInfo() : allocationRanges() {}
+
+    void
+    AddAllocationRange(AllocationRanges::value_type::first_type liveRange,
+                       AllocationRanges::value_type::second_type memPlaceInfo) {
+      allocationRanges.emplace_back(liveRange, memPlaceInfo);
     }
-  }
+    AllocationRanges &GetAllocationRanges() { return allocationRanges; }
+    void SetAllocationRanges(AllocationRanges &&allocationRanges) {
+      this->allocationRanges = allocationRanges;
+    }
 
-  const std::vector<LiveInterval> &GetIntervals() const { return intervals; }
-  void SetIntervals(std::vector<LiveInterval> intervals) {
-    this->intervals = intervals;
-  }
+  private:
+    AllocationRanges allocationRanges;
+  };
 
-  void SetUses(std::vector<live_t> uses) { this->uses = uses; }
-  const std::vector<live_t> &GetUses() const { return uses; }
-
-  void SetRange(LiveInterval range) { this->range = range; }
-  const LiveInterval &GetRange() const { return range; }
-
-  lin_t GetLin() const { return lin; }
-  void SetLin(lin_t lin) { this->lin = lin; }
-
-  live_t GetLive() const { return live; }
-  void SetLive(live_t live) { this->live = live; }
-
-  void SetIsRangeSet(bool isRangeSet) { this->isRangeSet = isRangeSet; }
-
-private:
-  lin_t lin {};
-  live_t live {};
-  std::vector<LiveInterval> intervals {};
-  std::vector<live_t> uses {};
-  LiveInterval range {};
-  bool isRangeSet = false;
-};
-
-class RegAllocInfo {
-public:
-  RegAllocInfo() = default;
-
-  void AddAllocationRange(MemPlaceInfo *memPlaceInfo, LiveRange liveRange) {
-    allocationRanges[memPlaceInfo] = liveRange;
-  }
-  std::unordered_map<MemPlaceInfo *, LiveRange> &GetAllocationRanges() { return allocationRanges; }
-  void SetAllocationRanges(std::unordered_map<MemPlaceInfo *, LiveRange> &&allocationRanges) {
-    this->allocationRanges = allocationRanges;
-  }
-
-private:
-  std::unordered_map<MemPlaceInfo *, LiveRange> allocationRanges {};
-};
-
+  RegAllocInfo &GetRegAllocInfo() { return regAllocInfo_; }
   LiveRange &GetLiveRange() { return liveRange_; }
 
 protected:
@@ -284,7 +265,8 @@ protected:
   std::vector<Instr *> inputs_;
   std::set<Instr *> users_;
   TypeId type_;
-  LiveRange liveRange_ {};
+  LiveRange liveRange_{};
+  RegAllocInfo regAllocInfo_{};
 };
 
 } // namespace ir::instr

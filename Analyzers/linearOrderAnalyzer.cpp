@@ -104,7 +104,7 @@ ir::BasicBlock *PickNextBlock(std::vector<ir::BasicBlock *> &readyList,
   return selected;
 }
 
-}
+} // namespace
 
 void LinearOrderAnalyzer::CreateLinearOrder(ir::BasicBlock *startBlock) {
   auto &blocks = graph_.GetBlocks();

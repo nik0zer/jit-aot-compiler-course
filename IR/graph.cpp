@@ -24,6 +24,9 @@ bool MethodGraph::RemoveBlock(BasicBlock *block) {
 }
 
 MethodGraph::~MethodGraph() {
+  for (auto slot : stackSlots_) {
+    delete slot;
+  }
   for (auto block : blocks_) {
     if (block != nullptr) {
       delete block;

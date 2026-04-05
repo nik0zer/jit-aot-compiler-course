@@ -7,7 +7,7 @@
   _(CAST, CastInstr)                                                           \
   _(BINARY_OPERATION, BinaryOperationInstr)                                    \
   _(RETURN, ReturnInstr)                                                       \
-  _(CALL, CallInstr)                                                           \
+  _(CALL, CallStaticInstr)                                                     \
   _(IF, IfInstr)                                                               \
   _(PHI, PhiInstr)
 

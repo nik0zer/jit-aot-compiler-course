@@ -6,17 +6,18 @@ method graph: source_ir_builder_5.fa
         3.u32 add v0 v1 
         4.u32 add v0 v1 
         5.u32 add v0 v1 
-        6.void if.le v2 v1 
+        6.u32 call.static A.foo v2 v5 
+        7.void if.le v2 v1 
         
     bb0 -> basic block 1 -> bb2
-        7.u32 sub v2 v1 
+        8.u32 sub v2 v1 
         
     bb0, bb1 -> basic block 2 -> bb3
-        8.u32 phi v5 v7 
-        9.u32 mul v8 v2 
-        10.u64 cast v9 
+        9.u32 phi v5 v8 
+        10.u32 mul v9 v2 
+        11.u64 cast v10 
         
     bb2 -> basic block 3 -> 
-        11.u64 return v10 
+        12.u64 return v11 
         
     

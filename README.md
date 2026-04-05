@@ -61,13 +61,13 @@ Calculate result of given operation between two input instructions
 Return value from method
 ``` 5.u32 return v1 ```
 
-### CALL INSTRUCTION
+### CALL INSTRUCTIONS
 
-Call method with given id and pass given parameters
+Call static method with given MethodGraph name and pass given parameters
 and return value from method
-``` 6.u32 call v2 v3 v4 ```
-v2 - method id
-v3, v4 - parameters from input instructions
+``` 6.u32 call.static StaticMethodForCall v2 v3 ```
+StaticMethodForCall - name of method
+v2, v3 - parameters from input instructions
 
 ### IF INSTRUCTION
 

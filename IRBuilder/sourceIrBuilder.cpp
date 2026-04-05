@@ -2,7 +2,7 @@
 #include "basicBlock.h"
 #include "graph.h"
 #include "instructions/binaryOperationInstr.h"
-#include "instructions/callInstr.h"
+#include "instructions/callStaticInstr.h"
 #include "instructions/castInstr.h"
 #include "instructions/constantInstr.h"
 #include "instructions/ifInstr.h"
@@ -365,23 +365,27 @@ ParseReturnInstr(const std::string &line,
 }
 
 ir::instr::Instr *
-ParseCallInstr(const std::string &line,
-               std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
-               UnderProcessedConnections &underProcessedConnections,
-               size_t lineNum, std::filesystem::path &file,
-               DiagnosticsEngine &diagnosticEngine) {
+ParseCallStaticInstr(const std::string &line,
+                     std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                     UnderProcessedConnections &underProcessedConnections,
+                     size_t lineNum, std::filesystem::path &file,
+                     DiagnosticsEngine &diagnosticEngine) {
   std::smatch match;
-  std::regex callRegex(R"((\d+)\.(u\d+|void)\s+call v(\d+)((?: v\d+)*))");
+  std::regex callRegex(
+      R"((\d+)\.(u\d+|void)\s+call\.static\s+([a-zA-Z0-9_.:-]+)((?: v\d+)*))");
   if (std::regex_match(line, match, callRegex)) {
     size_t instrId = std::stoul(match[1]);
     ir::instr::TypeId type = StringToTypeId(match[2]);
-    size_t methodId = std::stoul(match[3]);
+    std::string methodName = match[3];
 
     std::vector<ir::instr::Instr *> args;
     std::string argsStr = match[4];
     std::regex argRegex(R"(v(\d+))");
     std::sregex_iterator it(argsStr.begin(), argsStr.end(), argRegex);
     std::sregex_iterator end;
+
+    std::vector<std::pair<size_t, size_t>> unresolved_args;
+
     size_t inputIdx = 0;
     for (; it != end; ++it, ++inputIdx) {
       size_t argId = std::stoul((*it)[1]);
@@ -390,18 +394,18 @@ ParseCallInstr(const std::string &line,
         args.push_back(argIt->second);
       } else {
         args.push_back(nullptr);
-        underProcessedConnections.unresolvedInputs.push_back(
-            {nullptr, inputIdx, argId, {file, lineNum}});
+        unresolved_args.push_back({inputIdx, argId});
       }
     }
 
-    auto newInstr = new ir::instr::CallInstr(type, methodId, std::move(args));
+    auto newInstr =
+        new ir::instr::CallStaticInstr(type, methodName, std::move(args));
 
-    for (auto &unresolved : underProcessedConnections.unresolvedInputs) {
-      if (unresolved.objectWithUnresolvedConnection == nullptr) {
-        unresolved.objectWithUnresolvedConnection = newInstr;
-      }
+    for (const auto &unresolved : unresolved_args) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, unresolved.first, unresolved.second, {file, lineNum}});
     }
+
     return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file,
                           diagnosticEngine);
   }
@@ -501,7 +505,7 @@ ParseIfInstr(const std::string &line,
 constexpr std::array<InstrParserFunc, 8> InstrParsers = {
     ParseParamInstr,  ParseConstantInstr,
     ParseCastInstr,   ParseBinaryOperationInstr,
-    ParseReturnInstr, ParseCallInstr,
+    ParseReturnInstr, ParseCallStaticInstr,
     ParsePhiInstr,    ParseIfInstr};
 
 } // namespace

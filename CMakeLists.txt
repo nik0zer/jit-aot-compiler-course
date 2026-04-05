@@ -17,7 +17,7 @@ set(IR_BUILDER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/IRBuilder)
 set(IR_SOURCES
 ${INSTR_DIR}/instr.cpp
 ${INSTR_DIR}/binaryOperationInstr.cpp
-${INSTR_DIR}/callInstr.cpp
+${INSTR_DIR}/callStaticInstr.cpp
 ${INSTR_DIR}/castInstr.cpp
 ${INSTR_DIR}/constantInstr.cpp
 ${INSTR_DIR}/ifInstr.cpp

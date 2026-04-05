@@ -5,6 +5,7 @@
 3.u32 add v0 v1
 4.u32 add v0 v1
 5.u32 add v0 v1
+15.u32 call.static A.foo v2 v5
 8.void if.le v2 v1
 
 bb 0 -> bb 1 -> bb 2

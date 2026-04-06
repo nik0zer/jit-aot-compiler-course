@@ -1,0 +1,78 @@
+method graph: inlining1Method1.fa
+    basic block 0 -> bb1
+        0.u32 const 1
+        1.u32 const 5
+        
+    bb0 -> basic block 1 -> bb2
+        2.u32 const 1
+        3.u32 const 2
+        4.u32 call.static inlining1Method2 v2 v3 
+        5.u32 add v4 v3 
+        
+    bb1 -> basic block 2 -> 
+        6.u32 return v5 
+        
+    
+method graph: inlining1Method2.fa
+    basic block 0 -> bb1
+        0.u32 param 0
+        1.u32 param 1
+        2.u32 const 1
+        3.u32 const 10
+        
+    bb0 -> basic block 1 -> bb2, bb3
+        4.u32 add v2 v3 
+        5.void if.le v1 v3 
+        
+    bb1 -> basic block 2 -> bb5
+        6.u32 sub v1 v3 
+        
+    bb1 -> basic block 3 -> bb5
+        7.u32 mul v4 v1 
+        
+    bb2, bb3 -> basic block 5 -> 
+        8.u32 phi v6 v7 
+        9.u32 return v8 
+        
+    
+method graph: inlining1Method3.fa
+    
+
+
+method graph: inlining1Method1.fa
+    basic block 0 -> bb1
+        0.u32 const 1
+        1.u32 const 5
+        
+    bb0 -> basic block 1 -> bb3
+        2.u32 const 1
+        3.u32 const 2
+        4.u32 call.static inlining1Method2 v2 v3 
+        
+    bb1 -> basic block 3 -> bb4
+        7.u32 param 0
+        8.u32 param 1
+        9.u32 const 1
+        10.u32 const 10
+        
+    bb3 -> basic block 4 -> bb5, bb6
+        11.u32 add v9 v10 
+        12.void if.le v3 v10 
+        
+    bb4 -> basic block 5 -> bb7
+        13.u32 sub v3 v10 
+        
+    bb4 -> basic block 6 -> bb7
+        14.u32 mul v11 v3 
+        
+    bb5, bb6 -> basic block 7 -> bb8
+        15.u32 phi v13 v14 
+        16.u32 return v15 
+        
+    bb7 -> basic block 8 -> bb2
+        5.u32 add v16 v3 
+        
+    bb8 -> basic block 2 -> 
+        6.u32 return v5 
+        
+    

@@ -61,6 +61,7 @@ public:
   void AddBlock(BasicBlock *block);
   bool RemoveBlock(BasicBlock *block);
   BasicBlock *AllocateBlock();
+  BasicBlock *AllocateBlockAfter(BasicBlock *block);
 
   const std::vector<BasicBlock *> &GetBlocks() const { return blocks_; }
   void SetBlocks(const std::vector<BasicBlock *> &&blocks) { blocks_ = blocks; }

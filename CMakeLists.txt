@@ -42,6 +42,7 @@ set(PASSES_SOURCES
 ${PASSES_DIR}/constantFolding.cpp
 ${PASSES_DIR}/pass.cpp
 ${PASSES_DIR}/peepholes.cpp
+${PASSES_DIR}/inlinePass.cpp
 )
 
 set(IR_BUILDER_SOURCES

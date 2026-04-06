@@ -11,6 +11,16 @@ BasicBlock *MethodGraph::AllocateBlock() {
   blocks_.push_back(block);
   return block;
 }
+BasicBlock *MethodGraph::AllocateBlockAfter(BasicBlock *block) {
+  auto it = std::find(blocks_.begin(), blocks_.end(), block);
+  if (it == blocks_.end()) {
+    UNREACHABLE();
+    return nullptr;
+  }
+  auto newBlock =
+      blocks_.insert(it + 1, new BasicBlock(this, GetNextBlockId()));
+  return *newBlock;
+}
 
 void MethodGraph::AddBlock(BasicBlock *block) { blocks_.push_back(block); }
 bool MethodGraph::RemoveBlock(BasicBlock *block) {

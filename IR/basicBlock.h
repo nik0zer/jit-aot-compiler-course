@@ -15,12 +15,16 @@
 namespace analyzer {
 class Loop;
 }
+namespace passes {
+class InlinePass;
+}
 
 namespace ir {
 constexpr std::size_t MAX_NUM_OF_SUCCESSORS = 2;
 
 class BasicBlock {
 public:
+  friend class passes::InlinePass;
   explicit BasicBlock(MethodGraph *parent, BlockId id)
       : parent_(parent), id_(id) {}
 

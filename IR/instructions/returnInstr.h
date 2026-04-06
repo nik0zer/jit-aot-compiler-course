@@ -10,7 +10,9 @@ public:
   explicit ReturnInstr(TypeId type, Instr *input)
       : Instr(InstrOpcode::RETURN, type) {
     AddInput(input);
-    input->AddUser(this);
+    if (input != nullptr) {
+      input->AddUser(this);
+    }
   }
 
   void Dump(IrDumper &dumper, bool dumpLiveness = false) override;

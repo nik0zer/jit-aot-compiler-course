@@ -9,7 +9,10 @@ enum class IfType { EQ, NE, LT, LE, GT, GE };
 class IfInstr : public Instr {
 public:
   explicit IfInstr(Instr *lhs, Instr *rhs, IfType type)
-      : Instr(InstrOpcode::IF, TypeId::VOID, {lhs, rhs}, {}), type_(type) {}
+      : Instr(InstrOpcode::IF, TypeId::VOID, {lhs, rhs}, {}), type_(type) {
+    lhs->AddUser(this);
+    rhs->AddUser(this);
+  }
 
   bool IsControllFlow() override final { return true; }
 

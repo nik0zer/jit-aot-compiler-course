@@ -2,6 +2,10 @@
 
 ## IR GENERAL PRINCIPALS
 
+- IR Method graph has one entrypoint basic block (it has no predecessors and id = 0, can be get by graph->GetBlocks().begin())
+- IR Method graph has one exit basic block without successors and with only return instruction (it has no successors and can be get by graph->GetBlocks().back())
+- Parameters can only be in entrypoint basic block
+
 ### BASIC BLOCKS PRINCIPALS
 
 - Basic block is a sequence of instructions

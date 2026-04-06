@@ -35,6 +35,7 @@ set(TESTS_DATA
     "test_regalloc_1 reg_alloc_1.cpp ${EXPECTED_MODE} ./test_regalloc_1.fa"
     "test_regalloc_2 reg_alloc_2.cpp ${EXPECTED_MODE} ./test_regalloc_2.fa"
     "test_regalloc_3 reg_alloc_3.cpp ${EXPECTED_MODE} ./test_regalloc_3.fa"
+    "inlining_test_1 inlining_test_1.cpp ${EXPECTED_MODE} ./inlining_1_method_list.fconfig"
 )
 
 foreach(TEST_DATA IN ITEMS ${TESTS_DATA})

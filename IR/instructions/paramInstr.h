@@ -13,6 +13,8 @@ public:
 
   void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
 
+  ParamId GetParamId() const { return id_; }
+
 private:
   ParamId id_;
 };

@@ -10,6 +10,10 @@
 #include "instructions/paramInstr.h"
 #include "instructions/phiInstr.h"
 #include "instructions/returnInstr.h"
+#include "instructions/newArrayInstr.h"
+#include "instructions/loadArrayInstr.h"
+#include "instructions/storeArrayInstr.h"
+#include "instructions/newStringInstr.h"
 #include <array>
 #include <climits>
 #include <cstddef>
@@ -504,11 +508,157 @@ ParseIfInstr(const std::string &line,
   return nullptr;
 }
 
-constexpr std::array<InstrParserFunc, 8> InstrParsers = {
+ir::instr::Instr *
+ParseNewArrayInstr(const std::string &line,
+                std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                UnderProcessedConnections &underProcessedConnections,
+                size_t lineNum, std::filesystem::path &file,
+                DiagnosticsEngine &diagnosticEngine) {
+  std::smatch match;
+  std::regex newArrRegex(R"((\d+)\.(ref)\s+newarr\.(u\d+|i\d+|f\d+|ref)\s+v(\d+))");
+  if (std::regex_match(line, match, newArrRegex)) {
+    size_t instrId = std::stoul(match[1]);
+    ir::instr::TypeId type = StringToTypeId(match[3]);
+    size_t inputId = std::stoul(match[4]);
+    ir::instr::Instr *input = nullptr;
+    auto inputIt = instrMap.find(inputId);
+    if (inputIt != instrMap.end()) {
+      input = inputIt->second;
+    }
+
+    auto newInstr = new ir::instr::NewArrayInstr(type, input);
+    if (input == nullptr) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, 0, inputId, {file, lineNum}});
+    }
+    return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file,
+                          diagnosticEngine);
+  }
+  return nullptr;
+}
+
+ir::instr::Instr *
+ParseLoadArrayInstr(const std::string &line,
+                std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                UnderProcessedConnections &underProcessedConnections,
+                size_t lineNum, std::filesystem::path &file,
+                DiagnosticsEngine &diagnosticEngine) {
+  std::smatch match;
+  std::regex ldArrRegex(R"((\d+)\.(u\d+|i\d+|f\d+|ref)\s+ldarr\s+v(\d+)\s+v(\d+))");
+  if (std::regex_match(line, match, ldArrRegex)) {
+    size_t instrId = std::stoul(match[1]);
+    ir::instr::TypeId type = StringToTypeId(match[2]);
+    size_t arrId = std::stoul(match[3]);
+    size_t idxId = std::stoul(match[4]);
+
+    ir::instr::Instr *arr = nullptr;
+    auto arrIt = instrMap.find(arrId);
+    if (arrIt != instrMap.end()) {
+      arr = arrIt->second;
+    }
+
+    ir::instr::Instr *idx = nullptr;
+    auto idxIt = instrMap.find(idxId);
+    if (idxIt != instrMap.end()) {
+      idx = idxIt->second;
+    }
+
+    auto newInstr = new ir::instr::LoadArrayInstr(type, arr, idx);
+    if (arr == nullptr) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, 0, arrId, {file, lineNum}});
+    }
+    if (idx == nullptr) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, 1, idxId, {file, lineNum}});
+    }
+
+    return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file,
+                          diagnosticEngine);
+  }
+  return nullptr;
+}
+
+ir::instr::Instr *
+ParseStoreArrayInstr(const std::string &line,
+                std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                UnderProcessedConnections &underProcessedConnections,
+                size_t lineNum, std::filesystem::path &file,
+                DiagnosticsEngine &diagnosticEngine) {
+  std::smatch match;
+  std::regex stArrRegex(R"((\d+)\.(void)\s+starr\s+v(\d+)\s+v(\d+)\s+v(\d+))");
+  if (std::regex_match(line, match, stArrRegex)) {
+    size_t instrId = std::stoul(match[1]);
+    size_t arrId = std::stoul(match[3]);
+    size_t idxId = std::stoul(match[4]);
+    size_t valId = std::stoul(match[5]);
+
+    ir::instr::Instr *arr = nullptr;
+    auto arrIt = instrMap.find(arrId);
+    if (arrIt != instrMap.end()) {
+      arr = arrIt->second;
+    }
+
+    ir::instr::Instr *idx = nullptr;
+    auto idxIt = instrMap.find(idxId);
+    if (idxIt != instrMap.end()) {
+      idx = idxIt->second;
+    }
+
+    ir::instr::Instr *val = nullptr;
+    auto valIt = instrMap.find(valId);
+    if (valIt != instrMap.end()) {
+      val = valIt->second;
+    }
+
+    auto newInstr = new ir::instr::StoreArrayInstr(arr, idx, val);
+    if (arr == nullptr) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, 0, arrId, {file, lineNum}});
+    }
+    if (idx == nullptr) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, 1, idxId, {file, lineNum}});
+    }
+    if (val == nullptr) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, 2, valId, {file, lineNum}});
+    }
+
+    return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file,
+                          diagnosticEngine);
+  }
+  return nullptr;
+}
+
+ir::instr::Instr *
+ParseNewStringInstr(const std::string &line,
+                std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                UnderProcessedConnections &underProcessedConnections,
+                size_t lineNum, std::filesystem::path &file,
+                DiagnosticsEngine &diagnosticEngine) {
+  std::smatch match;
+  std::regex newStrRegex(R"###((\d+)\.(ref)\s+newstr\s+"(.*)")###");
+  if (std::regex_match(line, match, newStrRegex)) {
+    size_t instrId = std::stoul(match[1]);
+    std::string value = match[3];
+    auto newInstr = new ir::instr::NewStringInstr(value);
+    return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file,
+                          diagnosticEngine);
+  }
+  return nullptr;
+}
+
+
+constexpr std::array<InstrParserFunc, 12> InstrParsers = {
     ParseParamInstr,  ParseConstantInstr,
     ParseCastInstr,   ParseBinaryOperationInstr,
     ParseReturnInstr, ParseCallStaticInstr,
-    ParsePhiInstr,    ParseIfInstr};
+    ParsePhiInstr,    ParseIfInstr,
+    ParseNewArrayInstr, ParseLoadArrayInstr,
+    ParseStoreArrayInstr, ParseNewStringInstr
+};
+
 
 } // namespace
 

@@ -12,7 +12,7 @@ public:
   IrDumper() {}
   IrDumper(size_t indent) : indent_(indent) {}
 
-  void Add(const std::string &str);
+  void Add(const std::string_view str);
   void Add(size_t num);
   void Add(long num);
   void Add(double num);

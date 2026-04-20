@@ -9,6 +9,10 @@
   _(RETURN, ReturnInstr)                                                       \
   _(CALL_STATIC, CallStaticInstr)                                              \
   _(IF, IfInstr)                                                               \
-  _(PHI, PhiInstr)
+  _(NEW_ARR, NewArrayInstr)                                                    \
+  _(PHI, PhiInstr)                                                             \
+  _(LD_ARR, LoadArrayInstr)                                                    \
+  _(ST_ARR, StoreArrayInstr)                                                    \
+  _(NEW_STR, NewStringInstr)
 
 #endif

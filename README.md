@@ -93,7 +93,7 @@ of predecessors basic blocks
 ### NEW ARRAY INSTRUCTION
 
 Create new array of given type and size
-``` 10.ref newarr u32 v3 ```
+``` 10.ref newarr.u32 v1 ```
 input value is size of array
 
 ### LOAD ARRAY INSTRUCTION
@@ -105,10 +105,12 @@ input values are array and index
 ### STORE ARRAY INSTRUCTION
 
 Store value to array with given index
-``` 12.void starr v1 v3 ```
-input values are array and index
+
+``` 12.void starr v1 v3 c4 ```
+input values are array, index and value
 
 ### CREATE STRING INSTRUCTION
+
 Create new string with given content
 ``` 11.ref newstr "Hello world" ```
 

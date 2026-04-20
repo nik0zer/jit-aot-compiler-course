@@ -37,7 +37,7 @@ static bool CheckAndApplyConstantPeephole(ir::BasicBlock *block,
                                           ir::instr::Instr *realInput) {
   return VisitTypeId(typeId, [&](auto ptr_type_tag) {
     using T = std::remove_pointer_t<decltype(ptr_type_tag)>;
-    if constexpr (!std::is_void_v<T> && !std::is_same_v<T, std::nullptr_t>) {
+    if constexpr (!std::is_void_v<T> && !std::is_same_v<T, std::nullptr_t> && !std::is_same_v<T, void *>) {
       auto constVal = constInput->GetValue<T>();
       T result;
       switch (instr->AsBinaryOperationInstr()->GetOperation()) {

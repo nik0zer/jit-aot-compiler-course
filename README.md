@@ -89,3 +89,26 @@ Merge any number of input values from predecessors basic blocks and return one v
 input values from predecessors basic blocks
 goes in order same as order
 of predecessors basic blocks
+
+### NEW ARRAY INSTRUCTION
+
+Create new array of given type and size
+``` 10.ref newarr u32 v3 ```
+input value is size of array
+
+### LOAD ARRAY INSTRUCTION
+
+Load value from array with given index
+``` 11.u32 ldarr v1 v3 ```
+input values are array and index
+
+### STORE ARRAY INSTRUCTION
+
+Store value to array with given index
+``` 12.void starr v1 v3 ```
+input values are array and index
+
+### CREATE STRING INSTRUCTION
+Create new string with given content
+``` 11.ref newstr "Hello world" ```
+

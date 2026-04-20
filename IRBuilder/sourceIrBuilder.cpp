@@ -164,6 +164,8 @@ ir::instr::TypeId StringToTypeId(const std::string &type) {
     return ir::instr::TypeId::F64;
   if (type == "void")
     return ir::instr::TypeId::VOID;
+  if (type == "ref")
+    return ir::instr::TypeId::REF;
   return ir::instr::TypeId::NONE;
 }
 

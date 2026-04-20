@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <sys/types.h>
 #include <type_traits>
+
+#define REFERENCE_TYPE_WIDTH 64
 namespace ir::instr {
 enum class TypeId {
   U8,
@@ -18,6 +20,7 @@ enum class TypeId {
   I64,
   U64,
   F64,
+  REF,
   VOID,
   NONE
 };
@@ -43,6 +46,8 @@ template <typename T> constexpr inline TypeId GetTypeId() {
     return TypeId::F32;
   } else if constexpr (std::is_same_v<T, double>) {
     return TypeId::F64;
+  } else if constexpr (std::is_same_v<T, void *>) {
+    return TypeId::REF;
   }
   UNREACHABLE();
 }
@@ -61,6 +66,7 @@ template <> struct TypeIdToType<TypeId::I32> { using type = int32_t; };
 template <> struct TypeIdToType<TypeId::I64> { using type = int64_t; };
 template <> struct TypeIdToType<TypeId::F32> { using type = float; };
 template <> struct TypeIdToType<TypeId::F64> { using type = double; };
+template <> struct TypeIdToType<TypeId::REF> { using type = void *; };
 template <> struct TypeIdToType<TypeId::VOID> { using type = void; };
 template <> struct TypeIdToType<TypeId::NONE> { using type = std::nullptr_t; };
 
@@ -86,6 +92,8 @@ inline const std::string_view TypeIdToString(TypeId type) {
     return "f32";
   case TypeId::F64:
     return "f64";
+  case TypeId::REF:
+    return "ref";
   case TypeId::VOID:
     return "void";
   case TypeId::NONE:
@@ -118,6 +126,8 @@ inline const uint16_t TypeIdToSize(TypeId type) {
     return 32;
   case TypeId::F64:
     return 64;
+  case TypeId::REF:
+    return REFERENCE_TYPE_WIDTH;
   case TypeId::VOID:
     return 0;
   case TypeId::NONE:
@@ -156,6 +166,8 @@ template <typename Visitor> auto VisitTypeId(TypeId type, Visitor &&visitor) {
     return visitor(static_cast<double *>(nullptr));
   case TypeId::VOID:
     return visitor(static_cast<void *>(nullptr));
+  case TypeId::REF:
+    return visitor(static_cast<void **>(nullptr));
   case TypeId::NONE:
     return visitor(static_cast<std::nullptr_t *>(nullptr));
   default:

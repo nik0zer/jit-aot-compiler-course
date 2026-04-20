@@ -25,7 +25,7 @@ public:
   void Run(ir::MethodGraph *graph) override;
 
 private:
-  void TryInlineStaticCall(ir::MethodGraph *callerGraph, ir::BasicBlock *bb,
+  void TryInlineStaticCall(ir::MethodGraph *callerGraph,
                            ir::instr::CallStaticInstr *callInstr,
                            const std::string &methodName);
   ir::BasicBlock *SplitBlock(ir::MethodGraph *callerGraph, ir::BasicBlock *bb,

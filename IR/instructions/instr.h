@@ -57,6 +57,9 @@ public:
   Instr *GetPrevInstr() const { return prev_; }
   Instr *GetNextInstr() const { return next_; }
 
+  void SetBB(ir::BasicBlock *bb) { bb_ = bb; }
+  BasicBlock *GetBB() const { return bb_; }
+
   void SetInputs(const std::vector<Instr *> &&inputs) {
     inputs_ = inputs;
     for (auto input : inputs_) {
@@ -267,6 +270,7 @@ protected:
   TypeId type_;
   LiveRange liveRange_{};
   RegAllocInfo regAllocInfo_{};
+  BasicBlock *bb_{nullptr};
 };
 
 } // namespace ir::instr

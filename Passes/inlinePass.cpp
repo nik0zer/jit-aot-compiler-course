@@ -29,14 +29,8 @@ void ChangeParamsUses(ir::BasicBlock *entryBlock, ir::instr::Instr *callInstr) {
 }
 
 void ChangeReturnUses(ir::BasicBlock *exitBlock, ir::instr::Instr *callInstr) {
-  ir::instr::ReturnInstr *retInstr = nullptr;
-  for (auto instr = exitBlock->GetLastInstr(); instr != nullptr;
-       instr = instr->GetPrevInstr()) {
-    if (instr->IsReturnInstr()) {
-      retInstr = instr->AsReturnInstr();
-      break;
-    }
-  }
+  ASSERT(exitBlock->GetLastInstr()->IsReturnInstr());
+  auto retInstr = exitBlock->GetLastInstr()->AsReturnInstr();
 
   if (retInstr == nullptr) {
     UNREACHABLE();
@@ -85,13 +79,16 @@ ir::BasicBlock *InlinePass::SplitBlock(ir::MethodGraph *callerGraph,
 
     newBlock->firstNonPhi_ = firstToMove;
   }
+  for (auto instr = newBlock->GetFirstInstr(); instr != nullptr; instr = instr->GetNextInstr()) {
+    instr->SetBB(newBlock);
+  }
   return newBlock;
 }
 
 void InlinePass::TryInlineStaticCall(ir::MethodGraph *callerGraph,
-                                     ir::BasicBlock *bb,
                                      ir::instr::CallStaticInstr *callInstr,
                                      const std::string &methodName) {
+  auto *bb = callInstr->GetBB();
   auto calleeGraph = methodGraphGenerator_(methodName);
   if (calleeGraph == nullptr || calleeGraph->GetBlocks().empty()) {
     return;
@@ -158,21 +155,21 @@ void InlinePass::TryInlineStaticCall(ir::MethodGraph *callerGraph,
 
 void InlinePass::Run(ir::MethodGraph *graph) {
   std::vector<
-      std::tuple<ir::BasicBlock *, ir::instr::CallStaticInstr *, std::string>>
+      std::tuple<ir::instr::CallStaticInstr *, std::string>>
       callSites;
   for (auto bb : graph->GetBlocks()) {
     for (auto instr = bb->GetFirstNonPhiInstr(); instr != nullptr;
          instr = instr->GetNextInstr()) {
       if (instr->GetOpcode() == ir::instr::InstrOpcode::CALL_STATIC) {
         auto callInstr = instr->AsCallStaticInstr();
-        callSites.emplace_back(bb, callInstr, callInstr->MethodName());
+        callSites.emplace_back(callInstr, callInstr->MethodName());
       }
     }
   }
 
   for (const auto &site : callSites) {
-    TryInlineStaticCall(graph, std::get<0>(site), std::get<1>(site),
-                        std::get<2>(site));
+    TryInlineStaticCall(graph, std::get<0>(site),
+                        std::get<1>(site));
   }
 }
 

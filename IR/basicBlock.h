@@ -31,6 +31,7 @@ public:
   template <typename InstrType, typename... Args>
   instr::Instr *AllocateInstr(Args &&...args) {
     auto instr = new InstrType(std::forward<Args>(args)...);
+    instr->SetBB(this);
     AppendInstr(instr);
     return instr;
   }
@@ -95,6 +96,7 @@ public:
   template <typename InstrType, typename... Args>
   instr::Instr *AllocateInstrAfter(instr::Instr *insertInstr, Args &&...args) {
     auto instr = new InstrType(std::forward<Args>(args)...);
+    instr->SetBB(this);
     instr->SetInstrId(parent_->GetNextInstrId());
 
     auto nextInstr = insertInstr->GetNextInstr();

@@ -627,6 +627,7 @@ ir::MethodGraph *SourceIrBuilder::Build(std::ostream &diagnosticOutput) {
         continue;
       }
       currentBlock->AppendInstr(instr);
+      instr->SetBB(currentBlock);
       continue;
     }
     diagnosticEngine.ThrowError("Syntax error", currentLine, sourcePath_);

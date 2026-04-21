@@ -1,4 +1,5 @@
--> bb 0 -> bb 1, bb 2
+-> bb 0 -> bb 4
+
 0.u32 const 1
 1.u32 const 1
 2.u32 add v0 v1
@@ -10,15 +11,22 @@
 16.u32 const 5
 17.ref newarr.u64 v16
 18.u32 const 0
+23.ref null
+
+bb 0 -> bb 4 -> bb 3, bb 5
+24.void check.null v17
+
+bb 4 -> bb 5 -> bb 3, bb 1
+25.void check.bounds v17 v18
+
+bb 5 -> bb 1 -> bb 2
+6.u32 sub v2 v1
 19.u64 const 3
 20.void starr v17 v18 v19
 21.u64 ldarr v17 v18
 8.void if.le v22 v21
 
-bb 0 -> bb 1 -> bb 2
-6.u32 sub v2 v1
-
-bb 0, bb 1 -> bb 2 -> bb 3
+bb 1, bb 5 -> bb 2 -> bb 3
 9.u32 phi v5 v6
 7.u32 mul v9 v2
 10.u64 cast v7

@@ -13,6 +13,9 @@
   _(PHI, PhiInstr)                                                             \
   _(LD_ARR, LoadArrayInstr)                                                    \
   _(ST_ARR, StoreArrayInstr)                                                    \
-  _(NEW_STR, NewStringInstr)
+  _(NEW_STR, NewStringInstr)                                                    \
+  _(NULL_INSTR, NullInstr)                                                     \
+  _(CHECK_NULL, CheckNullInstr)                                                \
+  _(CHECK_BOUNDS, CheckBoundsInstr)
 
 #endif

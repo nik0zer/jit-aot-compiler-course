@@ -14,6 +14,9 @@
 #include "instructions/loadArrayInstr.h"
 #include "instructions/storeArrayInstr.h"
 #include "instructions/newStringInstr.h"
+#include "instructions/nullInstr.h"
+#include "instructions/checkNullInstr.h"
+#include "instructions/checkBoundsInstr.h"
 #include <array>
 #include <climits>
 #include <cstddef>
@@ -649,14 +652,101 @@ ParseNewStringInstr(const std::string &line,
   return nullptr;
 }
 
+ir::instr::Instr *
+ParseNullInstr(const std::string &line,
+                std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                UnderProcessedConnections &underProcessedConnections,
+                size_t lineNum, std::filesystem::path &file,
+                DiagnosticsEngine &diagnosticEngine) {
+  std::smatch match;
+  std::regex nullRegex(R"((\d+)\.ref\s+null)");
+  if (std::regex_match(line, match, nullRegex)) {
+    size_t instrId = std::stoul(match[1]);
+    auto newInstr = new ir::instr::NullInstr();
+    return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file,
+                          diagnosticEngine);
+  }
+  return nullptr;
+}
 
-constexpr std::array<InstrParserFunc, 12> InstrParsers = {
+ir::instr::Instr *
+ParseCheckNullInstr(const std::string &line,
+                std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                UnderProcessedConnections &underProcessedConnections,
+                size_t lineNum, std::filesystem::path &file,
+                DiagnosticsEngine &diagnosticEngine) {
+  std::smatch match;
+  std::regex checkNullRegex(R"((\d+)\.void\s+check\.null\s+v(\d+))");
+  if (std::regex_match(line, match, checkNullRegex)) {
+    size_t instrId = std::stoul(match[1]);
+    size_t inputId = std::stoul(match[2]);
+    ir::instr::Instr *input = nullptr;
+    auto inputIt = instrMap.find(inputId);
+    if (inputIt != instrMap.end()) {
+      input = inputIt->second;
+    }
+
+    auto newInstr = new ir::instr::CheckNullInstr(input);
+    if (input == nullptr) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, 0, inputId, {file, lineNum}});
+    }
+    return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file,
+                          diagnosticEngine);
+  }
+  return nullptr;
+}
+
+ir::instr::Instr *
+ParseCheckBoundsInstr(const std::string &line,
+                std::unordered_map<size_t, ir::instr::Instr *> &instrMap,
+                UnderProcessedConnections &underProcessedConnections,
+                size_t lineNum, std::filesystem::path &file,
+                DiagnosticsEngine &diagnosticEngine) {
+  std::smatch match;
+  std::regex checkBoundsRegex(R"((\d+)\.void\s+check\.bounds\s+v(\d+)\s+v(\d+))");
+  if (std::regex_match(line, match, checkBoundsRegex)) {
+    size_t instrId = std::stoul(match[1]);
+    size_t arrId = std::stoul(match[2]);
+    size_t idxId = std::stoul(match[3]);
+
+    ir::instr::Instr *arr = nullptr;
+    auto arrIt = instrMap.find(arrId);
+    if (arrIt != instrMap.end()) {
+      arr = arrIt->second;
+    }
+
+    ir::instr::Instr *idx = nullptr;
+    auto idxIt = instrMap.find(idxId);
+    if (idxIt != instrMap.end()) {
+      idx = idxIt->second;
+    }
+
+    auto newInstr = new ir::instr::CheckBoundsInstr(arr, idx);
+    if (arr == nullptr) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, 0, arrId, {file, lineNum}});
+    }
+    if (idx == nullptr) {
+      underProcessedConnections.unresolvedInputs.push_back(
+          {newInstr, 1, idxId, {file, lineNum}});
+    }
+
+    return AddParsedInstr(newInstr, instrId, instrMap, lineNum, file,
+                          diagnosticEngine);
+  }
+  return nullptr;
+}
+
+
+constexpr std::array<InstrParserFunc, 15> InstrParsers = {
     ParseParamInstr,  ParseConstantInstr,
     ParseCastInstr,   ParseBinaryOperationInstr,
     ParseReturnInstr, ParseCallStaticInstr,
     ParsePhiInstr,    ParseIfInstr,
     ParseNewArrayInstr, ParseLoadArrayInstr,
-    ParseStoreArrayInstr, ParseNewStringInstr
+    ParseStoreArrayInstr, ParseNewStringInstr,
+    ParseNullInstr, ParseCheckNullInstr, ParseCheckBoundsInstr
 };
 
 

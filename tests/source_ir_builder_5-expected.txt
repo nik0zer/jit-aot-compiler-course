@@ -1,5 +1,5 @@
 method graph: source_ir_builder_5.fa
-    basic block 0 -> bb1, bb2
+    basic block 0 -> bb4
         0.u32 const 1
         1.u32 const 1
         2.u32 add v0 v1 
@@ -11,20 +11,27 @@ method graph: source_ir_builder_5.fa
         8.u32 const 5
         9.ref newarr.u64 v8 
         10.u32 const 0
-        11.u64 const 3
-        12.void starr v9 v10 v11 
-        13.u64 ldarr v9 v10 
-        14.void if.le v3 v13 
+        11.ref null
         
-    bb0 -> basic block 1 -> bb2
-        15.u32 sub v2 v1 
+    bb0 -> basic block 4 -> bb3, bb5
+        12.void check.null v9 
         
-    bb0, bb1 -> basic block 2 -> bb3
-        16.u32 phi v6 v15 
-        17.u32 mul v16 v2 
-        18.u64 cast v17 
+    bb4 -> basic block 5 -> bb3, bb1
+        13.void check.bounds v9 v10 
+        
+    bb5 -> basic block 1 -> bb2
+        14.u32 sub v2 v1 
+        15.u64 const 3
+        16.void starr v9 v10 v15 
+        17.u64 ldarr v9 v10 
+        18.void if.le v3 v17 
+        
+    bb1, bb5 -> basic block 2 -> bb3
+        19.u32 phi v6 v14 
+        20.u32 mul v19 v2 
+        21.u64 cast v20 
         
     bb2 -> basic block 3 -> 
-        19.u64 return v18 
+        22.u64 return v21 
         
     

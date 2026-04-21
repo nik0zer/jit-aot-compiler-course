@@ -26,6 +26,9 @@ ${INSTR_DIR}/newArrayInstr.cpp
 ${INSTR_DIR}/storeArrayInstr.cpp
 ${INSTR_DIR}/loadArrayInstr.cpp
 ${INSTR_DIR}/newStringInstr.cpp
+${INSTR_DIR}/nullInstr.cpp
+${INSTR_DIR}/checkNullInstr.cpp
+${INSTR_DIR}/checkBoundsInstr.cpp
 ${INSTR_DIR}/phiInstr.cpp
 ${INSTR_DIR}/returnInstr.cpp
 ${IR_DIR}/graph.cpp

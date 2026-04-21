@@ -114,3 +114,22 @@ input values are array, index and value
 Create new string with given content
 ``` 11.ref newstr "Hello world" ```
 
+### NULL INSTRUCTION
+
+Return null value
+``` 11.ref null ```
+
+### CHECK NULL INSTRUCTION
+
+Check if input value is null
+go to first successor basic block
+else go to second successor basic block
+``` 11.void check.null v1 ```
+
+### CHECK BOUNDS INSTRUCTION
+
+Check if index is in bounds of array
+go to first successor basic block
+else go to second successor basic block
+``` 11.void check.bounds v1 v3 ```
+input values are array and index

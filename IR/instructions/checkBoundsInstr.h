@@ -6,15 +6,16 @@
 namespace ir::instr {
 class CheckBoundsInstr : public Instr {
 public:
-    CheckBoundsInstr(Instr *array, Instr *index) : Instr(InstrOpcode::CHECK_BOUNDS, TypeId::VOID) {
-        AddInput(array);
-        AddInput(index);
-    }
+  CheckBoundsInstr(Instr *array, Instr *index)
+      : Instr(InstrOpcode::CHECK_BOUNDS, TypeId::VOID) {
+    AddInput(array);
+    AddInput(index);
+  }
 
-    bool IsControllFlow() override { return true; }
+  bool IsControllFlow() override { return true; }
 
-    void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
+  void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
 };
-}
+} // namespace ir::instr
 
 #endif

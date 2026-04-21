@@ -156,6 +156,9 @@ public:
   }
   void SetSucc(BasicBlock *succ, size_t index) { succs_[index] = succ; }
 
+  void RemoveSuccessor(size_t index);
+  void RemovePredecessor(BasicBlock *pred);
+
   const std::vector<BasicBlock *> &GetPreds() const { return preds_; }
   const std::array<BasicBlock *, MAX_NUM_OF_SUCCESSORS> &GetSuccs() const {
     return succs_;

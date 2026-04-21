@@ -120,6 +120,17 @@ public:
     return false;
   }
 
+  void EraseInput(size_t index) {
+    if (index >= inputs_.size()) {
+      return;
+    }
+    auto input = inputs_[index];
+    if (input != nullptr) {
+      input->RemoveUser(this);
+    }
+    inputs_.erase(inputs_.begin() + index);
+  }
+
   bool ReplaceInput(Instr *input, Instr *newInput) {
     bool found = false;
     for (auto it = inputs_.begin(); it != inputs_.end(); ++it) {

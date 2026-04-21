@@ -6,10 +6,10 @@
 namespace ir::instr {
 class NullInstr : public Instr {
 public:
-    NullInstr() : Instr(InstrOpcode::NULL_INSTR, TypeId::REF) {}
+  NullInstr() : Instr(InstrOpcode::NULL_INSTR, TypeId::REF) {}
 
-    void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
+  void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
 };
-}
+} // namespace ir::instr
 
 #endif

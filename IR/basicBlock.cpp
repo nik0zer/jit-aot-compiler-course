@@ -1,6 +1,46 @@
 #include "basicBlock.h"
+#include "instructions/phiInstr.h"
+#include <algorithm>
 
 namespace ir {
+void BasicBlock::RemoveSuccessor(size_t index) {
+  if (index >= MAX_NUM_OF_SUCCESSORS) {
+    return;
+  }
+
+  auto succ = succs_[index];
+  if (succ != nullptr) {
+    size_t predIndex = -1;
+    auto &preds = succ->GetPreds();
+    for (size_t i = 0; i < preds.size(); ++i) {
+      if (preds[i] == this) {
+        predIndex = i;
+        break;
+      }
+    }
+
+    if (predIndex != -1 && succ->GetFirstInstr() != nullptr &&
+        succ->GetFirstInstr()->IsPhiInstr()) {
+      for (auto phi = succ->GetFirstInstr(); phi != nullptr;
+           phi = (phi->GetNextInstr() && phi->GetNextInstr()->IsPhiInstr())
+                     ? phi->GetNextInstr()->AsPhiInstr()
+                     : nullptr) {
+        phi->EraseInput(predIndex);
+      }
+    }
+    succ->RemovePredecessor(this);
+  }
+
+  if (index == 0) {
+    succs_[0] = succs_[1];
+  }
+  succs_[1] = nullptr;
+}
+
+void BasicBlock::RemovePredecessor(BasicBlock *pred) {
+  preds_.erase(std::remove(preds_.begin(), preds_.end(), pred), preds_.end());
+}
+
 void BasicBlock::DumpPredecessors(IrDumper &dumper) {
   for (auto block : preds_) {
     if (block == nullptr) {

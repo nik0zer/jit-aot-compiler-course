@@ -44,7 +44,8 @@ bool ConstantFolding::processBlock(ir::BasicBlock *block) {
         VisitTypeId(typeId, [&](auto ptr_type_tag) {
           using T = std::remove_pointer_t<decltype(ptr_type_tag)>;
           if constexpr (!std::is_void_v<T> &&
-                        !std::is_same_v<T, std::nullptr_t> && !std::is_same_v<T, void *>) {
+                        !std::is_same_v<T, std::nullptr_t> &&
+                        !std::is_same_v<T, void *>) {
             auto leftVal = leftConst->GetValue<T>();
             auto rightVal = rightConst->GetValue<T>();
             T result;
@@ -98,7 +99,8 @@ bool ConstantFolding::processBlock(ir::BasicBlock *block) {
         VisitTypeId(typeId, [&](auto ptr_type_tag) {
           using T = std::remove_pointer_t<decltype(ptr_type_tag)>;
           if constexpr (!std::is_void_v<T> &&
-                        !std::is_same_v<T, std::nullptr_t> && !std::is_same_v<T, void *>) {
+                        !std::is_same_v<T, std::nullptr_t> &&
+                        !std::is_same_v<T, void *>) {
             auto val = processedConst->GetValue<T>();
             auto newInstr = block->AllocateInstrAfter<ir::instr::ConstantInstr>(
                 instr, typeId, val);
@@ -122,7 +124,8 @@ bool ConstantFolding::processBlock(ir::BasicBlock *block) {
         VisitTypeId(typeId, [&](auto ptr_type_tag) {
           using T = std::remove_pointer_t<decltype(ptr_type_tag)>;
           if constexpr (!std::is_void_v<T> &&
-                        !std::is_same_v<T, std::nullptr_t> && !std::is_same_v<T, void *>) {
+                        !std::is_same_v<T, std::nullptr_t> &&
+                        !std::is_same_v<T, void *>) {
             auto firstConst = instr->GetInputs()[0]->AsConstantInstr();
             auto val = firstConst->GetValue<T>();
             auto newInstr = block->AllocateInstrAfter<ir::instr::ConstantInstr>(

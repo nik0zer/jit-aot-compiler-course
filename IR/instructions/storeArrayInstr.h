@@ -7,26 +7,26 @@
 namespace ir::instr {
 class StoreArrayInstr : public Instr {
 public:
-    StoreArrayInstr(Instr *array, Instr *index, Instr *value) : Instr(InstrOpcode::ST_ARR, TypeId::VOID)
-    {
-        AddInput(array);
-        AddInput(index);
-        AddInput(value);
+  StoreArrayInstr(Instr *array, Instr *index, Instr *value)
+      : Instr(InstrOpcode::ST_ARR, TypeId::VOID) {
+    AddInput(array);
+    AddInput(index);
+    AddInput(value);
 
-        if (array != nullptr) {
-            array->AddUser(this);
-        }
-        if (index != nullptr) {
-            index->AddUser(this);
-        }
-        if (value != nullptr) {
-            value->AddUser(this);
-        }
+    if (array != nullptr) {
+      array->AddUser(this);
     }
+    if (index != nullptr) {
+      index->AddUser(this);
+    }
+    if (value != nullptr) {
+      value->AddUser(this);
+    }
+  }
 
-    void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
+  void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
 };
 
-}
+} // namespace ir::instr
 
 #endif

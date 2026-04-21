@@ -9,19 +9,17 @@
 namespace ir::instr {
 class NewStringInstr : public Instr {
 public:
-    NewStringInstr(std::string value)
-        : Instr(InstrOpcode::NEW_STR, TypeId::REF), value_(value) {}
+  NewStringInstr(std::string value)
+      : Instr(InstrOpcode::NEW_STR, TypeId::REF), value_(value) {}
 
-    std::string GetValue() const {
-        return value_;
-    }
+  std::string GetValue() const { return value_; }
 
-    void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
+  void Dump(IrDumper &dumper, bool dumpLiveness = false) override;
 
 private:
-    std::string value_;
+  std::string value_;
 };
 
-}
+} // namespace ir::instr
 
 #endif

@@ -42,7 +42,8 @@ public:
       using ConcreteType = std::remove_pointer_t<decltype(ptr_type_tag)>;
       if constexpr (!std::is_void_v<ConcreteType> &&
                     !std::is_same_v<ConcreteType, std::nullptr_t> &&
-                    !std::is_same_v<ConcreteType, std::monostate> && !std::is_same_v<ConcreteType, void *>) {
+                    !std::is_same_v<ConcreteType, std::monostate> &&
+                    !std::is_same_v<ConcreteType, void *>) {
         auto val = std::get<ConcreteType>(value_);
         result = static_cast<T>(val);
       }
@@ -61,7 +62,8 @@ private:
     VisitTypeId(type, [this, &value](auto ptr_type_tag) {
       using ConcreteType = std::remove_pointer_t<decltype(ptr_type_tag)>;
       if constexpr (!std::is_same_v<ConcreteType, void> &&
-                    !std::is_same_v<ConcreteType, std::nullptr_t> && !std::is_same_v<ConcreteType, void *>) {
+                    !std::is_same_v<ConcreteType, std::nullptr_t> &&
+                    !std::is_same_v<ConcreteType, void *>) {
         value_ = static_cast<ConcreteType>(value);
       }
     });

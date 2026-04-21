@@ -79,7 +79,8 @@ ir::BasicBlock *InlinePass::SplitBlock(ir::MethodGraph *callerGraph,
 
     newBlock->firstNonPhi_ = firstToMove;
   }
-  for (auto instr = newBlock->GetFirstInstr(); instr != nullptr; instr = instr->GetNextInstr()) {
+  for (auto instr = newBlock->GetFirstInstr(); instr != nullptr;
+       instr = instr->GetNextInstr()) {
     instr->SetBB(newBlock);
   }
   return newBlock;
@@ -154,9 +155,7 @@ void InlinePass::TryInlineStaticCall(ir::MethodGraph *callerGraph,
 }
 
 void InlinePass::Run(ir::MethodGraph *graph) {
-  std::vector<
-      std::tuple<ir::instr::CallStaticInstr *, std::string>>
-      callSites;
+  std::vector<std::tuple<ir::instr::CallStaticInstr *, std::string>> callSites;
   for (auto bb : graph->GetBlocks()) {
     for (auto instr = bb->GetFirstNonPhiInstr(); instr != nullptr;
          instr = instr->GetNextInstr()) {
@@ -168,8 +167,7 @@ void InlinePass::Run(ir::MethodGraph *graph) {
   }
 
   for (const auto &site : callSites) {
-    TryInlineStaticCall(graph, std::get<0>(site),
-                        std::get<1>(site));
+    TryInlineStaticCall(graph, std::get<0>(site), std::get<1>(site));
   }
 }
 

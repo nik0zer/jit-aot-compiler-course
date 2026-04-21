@@ -1,0 +1,65 @@
+method graph: eliminate_redundant_checks.fa
+    basic block 0 -> bb1
+        0.u32 param 0
+        1.ref null
+        2.ref newarr.u32 v0 
+        3.u32 const 5
+        4.u32 const 5
+        5.u32 const 0
+        6.u32 const 1
+        7.u32 const 10
+        8.ref newarr.u32 v4 
+        
+    bb0 -> basic block 1 -> bb3, bb4
+        10.void check.null v2 
+        
+    basic block 2 -> bb13, bb25
+        11.u32 const 0
+        12.void if.gt v2 v3 
+        
+    bb1 -> basic block 3 -> bb12
+        13.u32 const 0
+        
+    bb1 -> basic block 4 -> bb5, bb6
+        15.void check.bounds v2 v3 
+        
+    bb4 -> basic block 6 -> bb13
+        16.u32 const 0
+        
+    bb4 -> basic block 5 -> bb7
+        
+    basic block 8 -> bb13
+        18.u32 const 0
+        
+    bb5 -> basic block 7 -> bb9
+        
+    basic block 10 -> bb13
+        20.u32 const 0
+        
+    bb7 -> basic block 9 -> bb11, bb12
+        21.void check.bounds v8 v7 
+        
+    bb9 -> basic block 11 -> bb13
+        22.u32 const 0
+        
+    bb3, bb9 -> basic block 12 -> bb13
+        23.u32 const 1
+        
+    bb2 -> basic block 25 -> bb26
+        
+    bb25 -> basic block 26 -> bb27, bb28
+        24.void check.bounds v2 v3 
+        
+    bb26 -> basic block 27 -> bb28
+        25.u32 const 0
+        
+    bb26, bb27 -> basic block 28 -> bb29
+        
+    bb27, bb28 -> basic block 29 -> bb13
+        27.u32 const 1
+        
+    bb2, bb6, bb8, bb10, bb11, bb12, bb29 -> basic block 13 -> 
+        28.u32 phi v11 v16 v18 v20 v22 v23 v27 
+        29.u32 return v28 
+        
+    

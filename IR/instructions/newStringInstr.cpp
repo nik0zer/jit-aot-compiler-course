@@ -2,12 +2,11 @@
 
 namespace ir::instr {
 
-void NewStringInstr::Dump(IrDumper &dumper, bool dumpLiveness)
-{
-    Instr::Dump(dumper, dumpLiveness);
-    dumper.Add(" newstr \"");
-    dumper.Add(value_);
-    dumper.Add("\"");
+void NewStringInstr::Dump(IrDumper &dumper, bool dumpLiveness) {
+  Instr::Dump(dumper, dumpLiveness);
+  dumper.Add(" newstr \"");
+  dumper.Add(value_);
+  dumper.Add("\"");
 }
 
-}
+} // namespace ir::instr
